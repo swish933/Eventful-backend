@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserRoles } from "../../util/constant";
 
@@ -23,6 +23,7 @@ const UserSchema = new Schema(
 		},
 		phoneNumber: {
 			type: String,
+			unique: true,
 			trim: true,
 		},
 		role: {
@@ -41,15 +42,17 @@ const UserSchema = new Schema(
 	{ timestamps: true }
 );
 
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next): Promise<void> {
 	const hash = await bcrypt.hash(this.password, 10);
 	this.password = hash;
 	next();
 });
 
-UserSchema.methods.isValidPassword = async function (password: string) {
+UserSchema.methods.isValidPassword = async function (
+	password: string
+): Promise<boolean> {
 	const user = this;
-	const compare = await bcrypt.compare(password, user.password);
+	const compare: boolean = await bcrypt.compare(password, user.password);
 
 	return compare;
 };

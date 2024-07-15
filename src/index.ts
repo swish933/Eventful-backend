@@ -2,12 +2,16 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import authRouter from "./routers/auth.router";
 import errorHandler from "./middleware/error.middleware";
+import { connectToMongoDB } from "./models/connection";
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
+connectToMongoDB();
+
+app.use(express.json());
 app.use("/api/auth", authRouter);
 
 //Catch all route
