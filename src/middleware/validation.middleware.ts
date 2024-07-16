@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import Joi, { ObjectSchema } from "joi";
-import { ICreateUserDto } from "../dtos/CreateUserDto.dto";
+import { ICreateUserDto, ILoginUserDto } from "../dtos/user.dto";
+import { ErrorWithStatus } from "../exceptions/error-with-status";
 
-type validationSchemaUnion = ICreateUserDto;
+type validationSchemaUnion = ICreateUserDto | ILoginUserDto;
 
 const validationMiddleware = (schema: ObjectSchema) => {
 	return async (
 		req: Request<{}, {}, validationSchemaUnion, {}>,
-		res: Response,
+		res: Response<IErrorResponse>,
 		next: NextFunction
 	) => {
 		try {
@@ -17,6 +18,7 @@ const validationMiddleware = (schema: ObjectSchema) => {
 			if (error instanceof Joi.ValidationError) {
 				return res.status(422).send({ message: error.message, success: false });
 			}
+			throw new ErrorWithStatus("Server Error", 500);
 		}
 	};
 };
