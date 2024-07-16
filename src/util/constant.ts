@@ -1,14 +1,14 @@
 export const enum UserRoles {
-	Creator = "Creator",
-	Eventee = "Eventee",
+	Creator = "creator",
+	Eventee = "eventee",
 }
 
 export const enum EventType {
-	Remote = "Remote",
-	Physical = "Physical",
+	Remote = "remote",
+	Physical = "physical",
 }
 
 export const enum OrderStatus {
-	Pending = "Pending",
-	Completed = "Completed",
+	Pending = "pending",
+	Completed = "completed",
 }

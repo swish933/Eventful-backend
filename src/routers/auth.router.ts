@@ -1,11 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import dotenv from "dotenv";
 import validationMiddleware from "../middleware/validation.middleware";
-import { passport } from "../middleware/auth.middleware";
 import { registerUserSchema } from "../validation/auth.validation";
-// import jwt from "jsonwebtoken";
-
-// import * as authController from "../controllers/auth.controller";
+import * as authController from "../controllers/auth.controller";
 
 dotenv.config();
 
@@ -14,13 +11,7 @@ const authRouter = Router();
 authRouter.post(
 	"/signup",
 	validationMiddleware(registerUserSchema),
-	passport.authenticate("signup", { session: false }),
-	async (req: Request, res: Response, next: NextFunction) => {
-		res.json({
-			message: "Signup successful",
-			user: req.user,
-		});
-	}
+	authController.registerUser
 );
 
 // authRouter.post("/login", async (req, res, next) => {

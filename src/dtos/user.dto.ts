@@ -5,3 +5,9 @@ export interface ICreateUserDto {
 	phoneNumber: string;
 	role?: string;
 }
+
+export interface ILoginUserDto {
+	email?: string;
+	username?: string;
+	password?: string;
+}

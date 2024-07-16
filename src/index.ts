@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authRouter from "./routers/auth.router";
 import errorHandler from "./middleware/error.middleware";
 import { connectToMongoDB } from "./models/connection";
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 connectToMongoDB();
 
+app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRouter);
 

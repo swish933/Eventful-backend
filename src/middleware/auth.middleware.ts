@@ -1,6 +1,7 @@
 import passport from "passport";
 import {
 	IStrategyOptionsWithRequest,
+	IStrategyOptions,
 	Strategy as LocalStrategy,
 } from "passport-local";
 import {
@@ -10,12 +11,12 @@ import {
 import { ExtractJwt } from "passport-jwt";
 import UserModel from "../models/schemas/users.schema";
 import { Request } from "express";
-import { ICreateUserDto } from "../dtos/CreateUserDto.dto";
+import { ICreateUserDto } from "../dtos/user.dto";
 
-// const jwtStrategyOpts: StrategyOptionsWithoutRequest = {
-// 	secretOrKey: process.env.JWT_SECRET ?? "",
-// 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-// };
+const jwtStrategyOpts: StrategyOptionsWithoutRequest = {
+	secretOrKey: process.env.JWT_SECRET ?? "",
+	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+};
 
 // passport.use(
 // 	new JWTstrategy(jwtStrategyOpts, async (token, done) => {
@@ -31,7 +32,7 @@ import { ICreateUserDto } from "../dtos/CreateUserDto.dto";
 // and then sends the user information to the next middleware if successful.
 // Otherwise, it reports an error.
 
-const signUpStartegyOpt: IStrategyOptionsWithRequest = {
+const signUpStartegyOpts: IStrategyOptionsWithRequest = {
 	usernameField: "email",
 	passwordField: "password",
 	passReqToCallback: true,
@@ -40,12 +41,12 @@ const signUpStartegyOpt: IStrategyOptionsWithRequest = {
 passport.use(
 	"signup",
 	new LocalStrategy(
-		signUpStartegyOpt,
+		signUpStartegyOpts,
 		async (req: Request<{}, {}, ICreateUserDto, {}>, email, password, done) => {
 			const dto = req.body;
 			try {
 				const newUser = await UserModel.create(dto);
-				return done(null, newUser);
+				done(null, newUser);
 			} catch (error) {
 				done(error);
 			}
@@ -56,33 +57,35 @@ passport.use(
 // This middleware authenticates the user based on the email and password provided.
 // If the user is found, it sends the user information to the next middleware.
 // Otherwise, it reports an error.
-passport.use(
-	"login",
-	new LocalStrategy(
-		{
-			usernameField: "email",
-			passwordField: "password",
-		},
-		async (email, password, done) => {
-			try {
-				const user = await UserModel.findOne({ email });
 
-				if (!user) {
-					return done(null, false, { message: "User not found" });
-				}
+// const logInStrategyOpts: IStrategyOptions = {
+// 	usernameField: "email",
+// 	passwordField: "password",
+// };
 
-				const validate: boolean = await (user as any).isValidPassword(password);
+// passport.use(
+// 	"login",
+// 	new LocalStrategy(logInStrategyOpts, async (email, password, done) => {
+// 		try {
+// 			const existingUser = await UserModel.findOne({ email });
 
-				if (!validate) {
-					return done(null, false, { message: "Wrong Password" });
-				}
+// 			if (!existingUser) {
+// 				return done(null, false, { message: "User not found" });
+// 			}
 
-				return done(null, user, { message: "Logged in Successfully" });
-			} catch (error) {
-				return done(error);
-			}
-		}
-	)
-);
+// 			const validate: boolean = await (existingUser as any).isValidPassword(
+// 				password
+// 			);
+
+// 			if (!validate) {
+// 				return done(null, false, { message: "Email or Password is incorrect" });
+// 			}
+
+// 			return done(null, existingUser, { message: "Logged in Successfully" });
+// 		} catch (error) {
+// 			return done(error);
+// 		}
+// 	})
+// );
 
 export { passport };
