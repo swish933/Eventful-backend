@@ -1,8 +1,27 @@
-import { Schema, model } from "mongoose";
+import { Schema, Model, model, Types, DefaultSchemaOptions } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserRoles } from "../../util/constant";
 
-const UserSchema = new Schema(
+export interface IUser {
+	id: string;
+	email: string;
+	username: string;
+	password: string;
+	phoneNumber: string;
+	role: string;
+	orders: [Types.ObjectId];
+	events: [Types.ObjectId];
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+interface IUserMethods {
+	isValidPassword(): Promise<boolean>;
+}
+
+type UserModel = Model<IUser, {}, IUserMethods>;
+
+const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 	{
 		email: {
 			type: String,
@@ -48,14 +67,12 @@ UserSchema.pre("save", async function (next): Promise<void> {
 	next();
 });
 
-UserSchema.methods.isValidPassword = async function (
-	password: string
-): Promise<boolean> {
+UserSchema.method("isValidPassword", async function (password: string) {
 	const user = this;
 	const compare: boolean = await bcrypt.compare(password, user.password);
 
 	return compare;
-};
+});
 
 UserSchema.set("toJSON", {
 	virtuals: true,
@@ -67,6 +84,6 @@ UserSchema.set("toJSON", {
 	},
 });
 
-const User = model("User", UserSchema);
+const User = model<IUser, UserModel>("User", UserSchema);
 
 export default User;

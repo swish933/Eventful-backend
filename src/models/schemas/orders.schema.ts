@@ -1,7 +1,18 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Model } from "mongoose";
 import { OrderStatus } from "../../util/constant";
 
-const OrderSchema = new Schema(
+export interface IOrder {
+	orderAmount: number;
+	qrCode: string;
+	orderNumber: string;
+	status: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+type OrderModel = Model<IOrder>;
+
+const OrderSchema = new Schema<IOrder, OrderModel>(
 	{
 		orderAmount: {
 			type: Number,
@@ -35,6 +46,6 @@ OrderSchema.set("toJSON", {
 	},
 });
 
-const Order = model("Order", OrderSchema);
+const Order = model<IOrder, OrderModel>("Order", OrderSchema);
 
 export default Order;

@@ -1,7 +1,23 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types, Model } from "mongoose";
 import { EventType } from "../../util/constant";
 
-const EventSchema = new Schema(
+export interface IEvent {
+	name: string;
+	location: string;
+	shareLink: string;
+	remoteEventLink: string;
+	startTime: Date;
+	endTime: Date;
+	eventType: string;
+	customers: [Types.ObjectId];
+	orders: [Types.ObjectId];
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+type EventModel = Model<IEvent>;
+
+const EventSchema = new Schema<IEvent, EventModel>(
 	{
 		name: {
 			type: String,
@@ -61,6 +77,6 @@ EventSchema.set("toJSON", {
 	},
 });
 
-const Event = model("Event", EventSchema);
+const Event = model<IEvent, EventModel>("Event", EventSchema);
 
 export default Event;
