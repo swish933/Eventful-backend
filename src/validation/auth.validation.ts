@@ -21,12 +21,11 @@ const registerUserSchema: ObjectSchema = Joi.object({
 });
 
 const loginUserSchema: ObjectSchema = Joi.object({
-	email: Joi.string().email(),
-	username: Joi.string(),
+	user: Joi.string(),
 	password: Joi.string()
 		.min(6)
 		.required()
-		.messages({ "string.min": "Password should be at least six characters" }),
-}).xor("email", "userName");
+		.messages({ "string.min": "Check that you entered the right password" }),
+});
 
 export { registerUserSchema, loginUserSchema };

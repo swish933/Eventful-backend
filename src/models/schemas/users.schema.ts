@@ -16,7 +16,7 @@ export interface IUser {
 }
 
 interface IUserMethods {
-	isValidPassword(): Promise<boolean>;
+	isValidPassword(password: string): Promise<boolean>;
 }
 
 type UserModel = Model<IUser, {}, IUserMethods>;

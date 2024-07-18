@@ -6,7 +6,7 @@ const errorHandler = (
 	res: Response<IErrorResponse>,
 	next: NextFunction
 ) => {
-	console.error(error.message);
+	// console.error(error.message);
 	res.status(error.status || 500);
 	res.json({ message: error.message, success: false });
 };

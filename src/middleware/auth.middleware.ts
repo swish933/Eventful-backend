@@ -14,7 +14,7 @@ import { Request } from "express";
 import { ICreateUserDto } from "../dtos/user.dto";
 
 const jwtStrategyOpts: StrategyOptionsWithoutRequest = {
-	secretOrKey: process.env.JWT_SECRET ?? "",
+	secretOrKey: process.env.JWT_SECRET ?? "secret",
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
@@ -42,7 +42,12 @@ passport.use(
 	"signup",
 	new LocalStrategy(
 		signUpStartegyOpts,
-		async (req: Request<{}, {}, ICreateUserDto, {}>, email, password, done) => {
+		async (
+			req: Request<{}, {}, ICreateUserDto, {}>,
+			_email,
+			_password,
+			done
+		) => {
 			const dto = req.body;
 			try {
 				const newUser = await UserModel.create(dto);
@@ -58,34 +63,37 @@ passport.use(
 // If the user is found, it sends the user information to the next middleware.
 // Otherwise, it reports an error.
 
-// const logInStrategyOpts: IStrategyOptions = {
-// 	usernameField: "email",
-// 	passwordField: "password",
-// };
+const logInStrategyOpts: IStrategyOptions = {
+	usernameField: "user",
+	passwordField: "password",
+};
 
-// passport.use(
-// 	"login",
-// 	new LocalStrategy(logInStrategyOpts, async (email, password, done) => {
-// 		try {
-// 			const existingUser = await UserModel.findOne({ email });
+passport.use(
+	"login",
+	new LocalStrategy(logInStrategyOpts, async (user, password, done) => {
+		try {
+			const existingUser = await UserModel.findOne({
+				$or: [{ email: user }, { username: user }],
+			});
 
-// 			if (!existingUser) {
-// 				return done(null, false, { message: "User not found" });
-// 			}
+			if (!existingUser) {
+				return done(null, false, { message: "User not found" });
+			}
 
-// 			const validate: boolean = await (existingUser as any).isValidPassword(
-// 				password
-// 			);
+			const validate: boolean = await existingUser.isValidPassword(password);
 
-// 			if (!validate) {
-// 				return done(null, false, { message: "Email or Password is incorrect" });
-// 			}
+			if (!validate) {
+				return done(null, undefined, {
+					message: "Email or Password is incorrect",
+				});
+			}
 
-// 			return done(null, existingUser, { message: "Logged in Successfully" });
-// 		} catch (error) {
-// 			return done(error);
-// 		}
-// 	})
-// );
+			return done(null, existingUser, { message: "Logged in Successfully" });
+		} catch (error: any) {
+			console.log(error.message);
+			return done(error);
+		}
+	})
+);
 
 export { passport };
