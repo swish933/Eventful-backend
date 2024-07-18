@@ -28,12 +28,14 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 			required: true,
 			unique: true,
 			trim: true,
+			lowercase: true,
 		},
 		username: {
 			type: String,
 			required: true,
 			unique: true,
 			trim: true,
+			lowercase: true,
 		},
 		password: {
 			type: String,
@@ -68,7 +70,7 @@ UserSchema.pre("save", async function (next): Promise<void> {
 });
 
 UserSchema.method("isValidPassword", async function (password: string) {
-	const user = this;
+	const user: IUser = this;
 	const compare: boolean = await bcrypt.compare(password, user.password);
 
 	return compare;
