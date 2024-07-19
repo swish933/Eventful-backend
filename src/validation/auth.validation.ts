@@ -21,7 +21,7 @@ const registerUserSchema: ObjectSchema = Joi.object({
 });
 
 const loginUserSchema: ObjectSchema = Joi.object({
-	user: Joi.string(),
+	user: Joi.string().required().label("Username or Email"),
 	password: Joi.string()
 		.min(6)
 		.required()
