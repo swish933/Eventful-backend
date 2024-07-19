@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import authRouter from "./routers/auth.router";
+import userRouter from "./routers/user.router";
 import errorHandler from "./middleware/error.middleware";
 import { connectToMongoDB } from "./models/connection";
 import morgan from "morgan";
@@ -8,16 +9,17 @@ import morgan from "morgan";
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || "3000";
 
 connectToMongoDB();
 
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 //Catch all route
-app.all("*", (req: Request, res: Response) => {
+app.all("*", (_req: Request, res: Response) => {
 	res.status(404);
 	res.json({
 		message: "Not found",
