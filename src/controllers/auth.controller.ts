@@ -3,26 +3,7 @@ import { passport } from "../middleware/auth.middleware";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { IUser } from "../models/schemas/users.schema";
 import jwt from "jsonwebtoken";
-
-interface IRegisterResponse {
-	message: string;
-	payload: Express.User | undefined;
-}
-
-interface ILoginResponse {
-	token: string;
-	message: string;
-}
-
-interface ICbInfo {
-	message: string;
-}
-
-interface IJwtPayload {
-	sub: string;
-	email: string;
-	role: string;
-}
+import { ICreateUserDto, ILoginUserDto } from "../types/dtos/user.dto";
 
 const MONGODUPLICATEERRCODE: number = 11000;
 
@@ -33,7 +14,7 @@ const opts: jwt.SignOptions = {
 };
 
 export const registerUser = async (
-	req: Request,
+	req: Request<{}, {}, ICreateUserDto, {}>,
 	res: Response<IRegisterResponse>,
 	next: NextFunction
 ) => {
@@ -63,7 +44,7 @@ export const registerUser = async (
 };
 
 export const loginUser = (
-	req: Request,
+	req: Request<{}, {}, ILoginUserDto, {}>,
 	res: Response<ILoginResponse>,
 	next: NextFunction
 ) => {
@@ -72,12 +53,11 @@ export const loginUser = (
 		async (err: any, user: IUser, info: ICbInfo) => {
 			try {
 				if (err) {
-					console.log(err);
 					return next(err);
 				}
 
 				if (!user) {
-					return next(new ErrorWithStatus(info.message, 404));
+					return next(new ErrorWithStatus(info.message, 400));
 				}
 
 				req.login(user, { session: false }, async (error) => {

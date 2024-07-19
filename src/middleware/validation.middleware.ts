@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Joi, { ObjectSchema } from "joi";
-import { ICreateUserDto, ILoginUserDto } from "../dtos/user.dto";
+import { ICreateUserDto, ILoginUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 
 type validationSchemaUnion = ICreateUserDto | ILoginUserDto;
