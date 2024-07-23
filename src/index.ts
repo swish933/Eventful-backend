@@ -5,6 +5,7 @@ import userRouter from "./routers/v1/user.router";
 import errorHandler from "./middleware/error.middleware";
 import { connectToMongoDB } from "./models/connection";
 import morgan from "morgan";
+import eventRouter from "./routers/v1/event.router";
 
 dotenv.config();
 
@@ -16,7 +17,8 @@ connectToMongoDB();
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/user", userRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/events", eventRouter);
 
 //Catch all route
 app.all("*", (_req: Request, res: Response) => {
