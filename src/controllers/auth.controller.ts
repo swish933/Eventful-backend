@@ -3,44 +3,12 @@ import { passport } from "../middleware/auth.middleware";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { IUser } from "../models/schemas/users.schema";
 import jwt from "jsonwebtoken";
-import { ICreateUserDto, ILoginUserDto } from "../types/dtos/user.dto";
-
-const MONGODUPLICATEERRCODE: number = 11000;
+import { ILoginUserDto } from "../types/dtos/user.dto";
 
 const secret = process.env.JWT_SECRET ?? "secret";
 
 const opts: jwt.SignOptions = {
 	expiresIn: "1h",
-};
-
-export const registerUser = async (
-	req: Request<{}, {}, ICreateUserDto, {}>,
-	res: Response<IRegisterResponse>,
-	next: NextFunction
-) => {
-	passport.authenticate(
-		"signup",
-		{ session: false },
-		async (err: any, user: IUser) => {
-			// console.log(err);
-			if (err && err.code === MONGODUPLICATEERRCODE) {
-				return next(
-					new ErrorWithStatus(
-						`A user with this ${Object.keys(err.keyPattern)[0]} already exists`,
-						400
-					)
-				);
-			}
-			if (err) {
-				return next(new ErrorWithStatus("Registration failed, try again", 400));
-			}
-
-			return res.status(201).json({
-				message: "Registration successful",
-				payload: user,
-			});
-		}
-	)(req, res, next);
 };
 
 export const loginUser = (
@@ -64,6 +32,7 @@ export const loginUser = (
 					if (error) return next(error);
 
 					const payload: IJwtPayload = {
+						id: user.id,
 						sub: user.id,
 						email: user.email,
 						role: user.role,

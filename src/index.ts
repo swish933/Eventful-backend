@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import authRouter from "./routers/auth.router";
-import userRouter from "./routers/user.router";
+import authRouter from "./routers/v1/auth.router";
+import userRouter from "./routers/v1/user.router";
 import errorHandler from "./middleware/error.middleware";
 import { connectToMongoDB } from "./models/connection";
 import morgan from "morgan";
@@ -15,8 +15,8 @@ connectToMongoDB();
 
 app.use(morgan("dev"));
 app.use(express.json());
-app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
 
 //Catch all route
 app.all("*", (_req: Request, res: Response) => {
