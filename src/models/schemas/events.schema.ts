@@ -3,14 +3,14 @@ import { EventType } from "../../util/constant";
 
 export interface IEvent {
 	name: string;
+	description: string;
 	location: string;
-	shareLink: string;
-	remoteEventLink: string;
+	socialLinks: string[];
 	startTime: Date;
 	endTime: Date;
 	eventType: string;
-	customers: [Types.ObjectId];
-	orders: [Types.ObjectId];
+	customers: Types.ObjectId[];
+	orders: Types.ObjectId[];
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -24,20 +24,20 @@ const EventSchema = new Schema<IEvent, EventModel>(
 			trim: true,
 			required: true,
 		},
-		location: {
-			type: String,
-			trim: true,
-			default: null,
-		},
-		shareLink: {
+		description: {
 			type: String,
 			trim: true,
 			required: true,
 		},
-		remoteEventLink: {
+		location: {
 			type: String,
 			trim: true,
-			default: null,
+			required: true,
+		},
+		socialLinks: {
+			type: [String],
+			trim: true,
+			required: true,
 		},
 		startTime: {
 			type: Date,
