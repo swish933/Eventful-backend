@@ -8,7 +8,7 @@ export const enum EventType {
 	Physical = "physical",
 }
 
-export const enum OrderStatus {
+export const enum resourceStatus {
 	Pending = "pending",
 	Completed = "completed",
 }

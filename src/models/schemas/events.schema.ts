@@ -3,14 +3,16 @@ import { EventType } from "../../util/constant";
 
 export interface IEvent {
 	name: string;
+	image: string;
 	description: string;
 	location: string;
-	socialLinks: string[];
-	startTime: Date;
-	endTime: Date;
+	organizer: Types.ObjectId;
+	startsAt: Date;
+	endsAt: Date;
 	eventType: string;
-	customers: Types.ObjectId[];
-	orders: Types.ObjectId[];
+	customers?: Types.ObjectId[];
+	orders?: Types.ObjectId[];
+	reminder?: Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -24,6 +26,10 @@ const EventSchema = new Schema<IEvent, EventModel>(
 			trim: true,
 			required: true,
 		},
+		image: {
+			type: String,
+			required: true,
+		},
 		description: {
 			type: String,
 			trim: true,
@@ -34,22 +40,23 @@ const EventSchema = new Schema<IEvent, EventModel>(
 			trim: true,
 			required: true,
 		},
-		socialLinks: {
-			type: [String],
-			trim: true,
-			required: true,
-		},
-		startTime: {
+
+		startsAt: {
 			type: Date,
 			required: true,
 		},
-		endTime: {
+		endsAt: {
 			type: Date,
 			required: true,
 		},
 		eventType: {
 			type: String,
 			enum: [EventType.Physical, EventType.Remote],
+			required: true,
+		},
+		organizer: {
+			type: Schema.Types.ObjectId,
+			ref: "User",
 			required: true,
 		},
 		customers: [
@@ -64,6 +71,10 @@ const EventSchema = new Schema<IEvent, EventModel>(
 				ref: "Order",
 			},
 		],
+		reminder: {
+			type: Schema.Types.ObjectId,
+			ref: "Reminder",
+		},
 	},
 	{ timestamps: true }
 );

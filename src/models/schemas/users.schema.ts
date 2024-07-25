@@ -6,11 +6,12 @@ export interface IUser {
 	id: string;
 	email: string;
 	username: string;
+	image?: string;
 	password: string;
-	phoneNumber: string;
-	role: string;
-	orders: [Types.ObjectId];
-	events: [Types.ObjectId];
+	phoneNumber?: string;
+	role?: string;
+	orders?: Types.ObjectId[];
+	events?: Types.ObjectId[];
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -37,6 +38,9 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 			trim: true,
 			lowercase: true,
 		},
+		image: {
+			type: String,
+		},
 		password: {
 			type: String,
 			required: true,
@@ -58,7 +62,12 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 				ref: "Order",
 			},
 		],
-		events: [{ type: Schema.Types.ObjectId, ref: "Event" }],
+		events: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "Event",
+			},
+		],
 	},
 	{ timestamps: true }
 );
