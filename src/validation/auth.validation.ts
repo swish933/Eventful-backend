@@ -1,4 +1,5 @@
 import Joi, { ObjectSchema } from "joi";
+import { UserRoles } from "../util/constant";
 
 const registerUserSchema: ObjectSchema = Joi.object({
 	body: {
@@ -18,7 +19,10 @@ const registerUserSchema: ObjectSchema = Joi.object({
 			.required()
 			.label("Phone number")
 			.messages({ "string.pattern.base": "Enter a valid phone number" }),
-		role: Joi.string(),
+		role: Joi.string()
+			.valid(UserRoles.Creator, UserRoles.Eventee)
+			.required()
+			.label("User role"),
 		avatar: Joi.string(),
 	},
 	file: Joi.string(),
@@ -30,6 +34,7 @@ const loginUserSchema: ObjectSchema = Joi.object({
 		password: Joi.string()
 			.min(6)
 			.required()
+			.label("Password")
 			.messages({ "string.min": "Check that you entered the right password" }),
 	},
 });
