@@ -6,6 +6,7 @@ import errorHandler from "./middleware/error.middleware";
 import { connectToMongoDB } from "./models/connection";
 import morgan from "morgan";
 import eventRouter from "./routers/v1/event.router";
+import redis from "./integrations/redis";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const app: Express = express();
 const PORT = process.env.PORT || "3000";
 
 connectToMongoDB();
+redis.connect();
 
 app.use(morgan("dev"));
 app.use(express.json());
