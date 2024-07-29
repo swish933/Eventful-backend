@@ -7,11 +7,14 @@ import {
 } from "../../middleware/access-control.middleware";
 import validationMiddleware from "../../middleware/validation.middleware";
 import { registerUserSchema } from "../../validation/auth.validation";
+import multer from "multer";
 
 const userRouter = Router();
+const upload = multer({ dest: "/tmp/uploads" });
 
 userRouter.post(
 	"/",
+	upload.single("avatar"),
 	validationMiddleware(registerUserSchema),
 	userController.registerUser
 );

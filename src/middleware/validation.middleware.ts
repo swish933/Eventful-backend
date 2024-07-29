@@ -5,6 +5,11 @@ import { ErrorWithStatus } from "../exceptions/error-with-status";
 
 type validationSchemaUnion = ICreateUserDto | ILoginUserDto;
 
+type requestContent = {
+	body: object;
+	file?: string;
+};
+
 const validationMiddleware = (schema: ObjectSchema) => {
 	return async (
 		req: Request<{}, {}, validationSchemaUnion, {}>,
@@ -12,7 +17,13 @@ const validationMiddleware = (schema: ObjectSchema) => {
 		next: NextFunction
 	) => {
 		try {
-			await schema.validateAsync(req.body);
+			const content: requestContent = { body: req.body };
+
+			if (req.file) {
+				content.file = req.file.path;
+			}
+
+			await schema.validateAsync({ ...content });
 			next();
 		} catch (error: unknown) {
 			if (error instanceof Joi.ValidationError) {

@@ -6,7 +6,7 @@ export interface IUser {
 	id: string;
 	email: string;
 	username: string;
-	image?: string;
+	avatar?: string;
 	password: string;
 	phoneNumber?: string;
 	role?: string;
@@ -38,8 +38,9 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 			trim: true,
 			lowercase: true,
 		},
-		image: {
+		avatar: {
 			type: String,
+			default: null,
 		},
 		password: {
 			type: String,

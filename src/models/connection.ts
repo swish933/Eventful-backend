@@ -1,5 +1,6 @@
 import moogoose from "mongoose";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -16,6 +17,10 @@ function connectToMongoDB() {
 	moogoose.connection.on("error", (err) => {
 		console.log("Error connecting to MongoDB", err);
 	});
+
+	mongoose.connection.on("disconnected", () =>
+		console.log("disconnected from MongoDB")
+	);
 }
 
 export { connectToMongoDB };
