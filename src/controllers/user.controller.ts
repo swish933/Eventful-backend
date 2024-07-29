@@ -4,6 +4,7 @@ import { IUser } from "../models/schemas/users.schema";
 import { ICreateUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { passport } from "../middleware/auth.middleware";
+import { enqueueUploadJob } from "../jobs/image_upload.queue";
 
 const MONGODUPLICATEERRCODE: number = 11000;
 
@@ -16,7 +17,6 @@ export const registerUser = async (
 		"signup",
 		{ session: false },
 		async (err: any, user: IUser) => {
-			// console.log(err);
 			if (err && err.code === MONGODUPLICATEERRCODE) {
 				return next(
 					new ErrorWithStatus(
@@ -27,6 +27,12 @@ export const registerUser = async (
 			}
 			if (err) {
 				return next(new ErrorWithStatus("Registration failed, try again", 400));
+			}
+
+			if (req.file) {
+				enqueueUploadJob({
+					data: { imagePath: req.file?.path, userId: user.id },
+				});
 			}
 
 			return res.status(201).json({

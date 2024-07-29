@@ -12,3 +12,7 @@ export const enum resourceStatus {
 	Pending = "pending",
 	Completed = "completed",
 }
+
+export const enum queueName {
+	Images = "Images",
+}
