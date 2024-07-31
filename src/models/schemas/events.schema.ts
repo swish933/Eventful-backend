@@ -3,7 +3,7 @@ import { EventType } from "../../util/constant";
 
 export interface IEvent {
 	name: string;
-	image: string;
+	images: string[];
 	description: string;
 	location: string;
 	organizer: Types.ObjectId;
@@ -26,10 +26,12 @@ const EventSchema = new Schema<IEvent, EventModel>(
 			trim: true,
 			required: true,
 		},
-		image: {
-			type: String,
-			required: true,
-		},
+		images: [
+			{
+				type: String,
+				required: true,
+			},
+		],
 		description: {
 			type: String,
 			trim: true,

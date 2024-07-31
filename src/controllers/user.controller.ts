@@ -4,7 +4,7 @@ import { IUser } from "../models/schemas/users.schema";
 import { ICreateUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { passport } from "../middleware/auth.middleware";
-import { enqueueUploadJob } from "../jobs/image_upload.queue";
+import { enqueueUploadJob } from "../jobs/image_upload/image_upload.queue";
 
 const MONGODUPLICATEERRCODE: number = 11000;
 
@@ -31,7 +31,7 @@ export const registerUser = async (
 
 			if (req.file) {
 				enqueueUploadJob({
-					data: { imagePath: req.file?.path, userId: user.id },
+					data: { image: req.file?.path, userId: user.id },
 				});
 			}
 

@@ -1,7 +1,9 @@
 export interface IImageUploadDto {
 	data: {
-		imagePath: string;
-		userId: string;
+		image?: string;
+		images?: string[];
+		userId?: string;
+		eventId?: string;
 	};
 	opts?: {};
 }

@@ -9,7 +9,7 @@ export interface IUser {
 	avatar?: string;
 	password: string;
 	phoneNumber?: string;
-	role?: string;
+	role: string;
 	orders?: Types.ObjectId[];
 	events?: Types.ObjectId[];
 	createdAt: Date;
