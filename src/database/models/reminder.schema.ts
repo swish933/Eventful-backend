@@ -4,7 +4,7 @@ import { resourceStatus } from "../../util/constant";
 export interface IReminder {
 	time: Date;
 	status: string;
-	creator: Types.ObjectId;
+	reminderOwner: Types.ObjectId;
 	event: Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
@@ -23,7 +23,7 @@ const ReminderSchema = new Schema<IReminder, ReminderModel>(
 			enum: [resourceStatus.Pending, resourceStatus.Completed],
 			default: resourceStatus.Pending,
 		},
-		creator: {
+		reminderOwner: {
 			type: Schema.Types.ObjectId,
 			ref: "User",
 			required: true,

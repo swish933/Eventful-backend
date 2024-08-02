@@ -18,9 +18,9 @@ export const createEvent = async (
 		body.organizer = req.user.id;
 
 		const time = body.reminderTime;
-		const creator = req.user.id;
+		const reminderOwner = req.user.id;
 
-		const reminderDto: IReminderDto = { time, creator };
+		const reminderDto: IReminderDto = { time, reminderOwner };
 
 		const newEvent = await eventService.createEvent(body, files, reminderDto);
 

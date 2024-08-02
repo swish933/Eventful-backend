@@ -1,5 +1,5 @@
 export interface IReminderDto {
 	time: Date;
-	creator: string;
+	reminderOwner: string;
 	event?: string;
 }
