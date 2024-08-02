@@ -7,7 +7,11 @@ import { connectToMongoDB } from "./database/connection";
 import morgan from "morgan";
 import eventRouter from "./routers/v1/event.router";
 import redis from "./integrations/redis";
-import { enqueueReminderJob } from "./jobs/reminder/reminder.queue";
+import {
+	enqueueReminderJob,
+	cleanUpOpts,
+	reminderOpts,
+} from "./jobs/reminder/reminder.queue";
 import { jobNames } from "./util/constant";
 
 dotenv.config();
@@ -18,9 +22,19 @@ const PORT = process.env.PORT || "3000";
 connectToMongoDB();
 redis.connect();
 
-(async () => {
-	await enqueueReminderJob({ name: jobNames.reminder });
-})();
+// (async () => {
+// 	await enqueueReminderJob({
+// 		name: jobNames.reminder,
+// 		opts: reminderOpts,
+// 	});
+// })();
+
+// (async () => {
+// 	await enqueueReminderJob({
+// 		name: jobNames.reminderCleanUp,
+// 		opts: cleanUpOpts,
+// 	});
+// })();
 
 app.use(morgan("dev"));
 app.use(express.json());
