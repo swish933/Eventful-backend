@@ -9,7 +9,7 @@ import {
 	StrategyOptionsWithoutRequest,
 } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
-import UserModel from "../models/schemas/users.schema";
+import UserModel from "../database/models/users.schema";
 import { Request } from "express";
 import { ICreateUserDto } from "../types/dtos/user.dto";
 

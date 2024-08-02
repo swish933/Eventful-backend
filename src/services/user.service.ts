@@ -1,5 +1,5 @@
-import { IUser } from "../models/schemas/users.schema";
-import UserModel from "../models/schemas/users.schema";
+import { IUser } from "../database/models/users.schema";
+import UserModel from "../database/models/users.schema";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 
 export const getUser = async (id: string): Promise<IUser> => {

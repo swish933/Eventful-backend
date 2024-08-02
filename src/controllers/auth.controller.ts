@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { passport } from "../middleware/auth.middleware";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
-import { IUser } from "../models/schemas/users.schema";
+import { IUser } from "../database/models/users.schema";
 import jwt from "jsonwebtoken";
 import { ILoginUserDto } from "../types/dtos/user.dto";
 
