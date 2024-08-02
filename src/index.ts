@@ -3,10 +3,12 @@ import dotenv from "dotenv";
 import authRouter from "./routers/v1/auth.router";
 import userRouter from "./routers/v1/user.router";
 import errorHandler from "./middleware/error.middleware";
-import { connectToMongoDB } from "./models/connection";
+import { connectToMongoDB } from "./database/connection";
 import morgan from "morgan";
 import eventRouter from "./routers/v1/event.router";
 import redis from "./integrations/redis";
+import { enqueueReminderJob } from "./jobs/reminder/reminder.queue";
+import { jobNames } from "./util/constant";
 
 dotenv.config();
 
@@ -15,6 +17,10 @@ const PORT = process.env.PORT || "3000";
 
 connectToMongoDB();
 redis.connect();
+
+(async () => {
+	await enqueueReminderJob({ name: jobNames.reminder });
+})();
 
 app.use(morgan("dev"));
 app.use(express.json());
