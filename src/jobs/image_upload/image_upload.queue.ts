@@ -1,6 +1,6 @@
-import { Queue } from "bullmq";
-import { IImageUploadDto } from "../../types/job.types";
-import { jobNames, queueName } from "../../util/constant";
+import { JobsOptions, Queue } from "bullmq";
+import { IImageUploadJobDto } from "../../types/job.types";
+import { queueName } from "../../util/constant";
 
 const redisHost = process.env.REDIS_HOST || "127.0.0.1";
 const redisPort = Number(process.env.REDIS_PORT) || 6379;
@@ -11,21 +11,14 @@ const imageUploadQueue = new Queue(queueName.Images, {
 		host: redisHost,
 	},
 });
+const queueOpts: JobsOptions = {
+	removeOnComplete: true,
+	removeOnFail: true,
+};
 
-const enqueueUploadJob = function ({ data, opts }: IImageUploadDto) {
+const enqueueUploadJob = function (job: IImageUploadJobDto) {
 	console.log("Adding image upload job to queue");
-	imageUploadQueue.add(jobNames.singleUpload, data, {
-		removeOnComplete: true,
-		removeOnFail: true,
-	});
+	imageUploadQueue.add(job.name, job.data, queueOpts);
 };
 
-const enqueueMultipleUploadJob = function ({ data, opts }: IImageUploadDto) {
-	console.log("Adding multiple image upload job to queue");
-	imageUploadQueue.add(jobNames.multipleUpload, data, {
-		removeOnComplete: true,
-		removeOnFail: true,
-	});
-};
-
-export { enqueueUploadJob, enqueueMultipleUploadJob };
+export { enqueueUploadJob };

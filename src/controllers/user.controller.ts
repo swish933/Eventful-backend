@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../services/user.service";
-import { IUser } from "../models/schemas/users.schema";
+import { IUser } from "../database/models/users.schema";
 import { ICreateUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { passport } from "../middleware/auth.middleware";
 import { enqueueUploadJob } from "../jobs/image_upload/image_upload.queue";
+import { jobNames } from "../util/constant";
 
 const MONGODUPLICATEERRCODE: number = 11000;
 
@@ -31,6 +32,7 @@ export const registerUser = async (
 
 			if (req.file) {
 				enqueueUploadJob({
+					name: jobNames.singleUpload,
 					data: { image: req.file?.path, userId: user.id },
 				});
 			}
