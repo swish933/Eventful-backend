@@ -12,7 +12,15 @@ const reminderQueue = new Queue(queueName.Reminders, {
 	},
 });
 
-const queueOpts: JobsOptions = {
+const reminderOpts: JobsOptions = {
+	removeOnComplete: true,
+	removeOnFail: true,
+	repeat: {
+		pattern: "* * * * *",
+	},
+};
+
+const cleanUpOpts: JobsOptions = {
 	removeOnComplete: true,
 	removeOnFail: true,
 	repeat: {
@@ -22,7 +30,7 @@ const queueOpts: JobsOptions = {
 
 const enqueueReminderJob = async function (job: IReminderJobDto) {
 	console.log("Adding reminder job to queue");
-	reminderQueue.add(job.name, job.data, queueOpts);
+	reminderQueue.add(job.name, job.data, job.opts);
 };
 
-export { enqueueReminderJob };
+export { enqueueReminderJob, cleanUpOpts, reminderOpts };
