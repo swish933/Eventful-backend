@@ -22,6 +22,7 @@ export const enum jobNames {
 	singleUpload = "singleUpload",
 	multipleUpload = "multipleUpload",
 	reminder = "reminder",
+	reminderCleanUp = "reminderCleanUp",
 }
 
 export const mimetypes = /image\/png|image\/jpeg|image\/jpg|image\/webp/;
