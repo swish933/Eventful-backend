@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as eventService from "../services/event.service";
-import { ICreateEventDto, IReminderDto } from "../types/dtos/event.dto";
+import { ICreateEventDto } from "../types/dtos/event.dto";
+import { IReminderDto } from "../types/dtos/reminder.dto";
 
 export const createEvent = async (
 	req: Request<{}, {}, ICreateEventDto, {}>,

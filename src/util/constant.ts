@@ -15,11 +15,13 @@ export const enum resourceStatus {
 
 export const enum queueName {
 	Images = "Images",
+	Reminders = "Reminders",
 }
 
 export const enum jobNames {
 	singleUpload = "singleUpload",
 	multipleUpload = "multipleUpload",
+	reminder = "reminder",
 }
 
 export const mimetypes = /image\/png|image\/jpeg|image\/jpg|image\/webp/;

@@ -1,5 +1,3 @@
-import { Types } from "mongoose";
-
 export interface ICreateEventDto {
 	name: string;
 	description: string;
@@ -10,10 +8,4 @@ export interface ICreateEventDto {
 	reminderTime: Date;
 	files?: string[];
 	organizer?: string;
-}
-
-export interface IReminderDto {
-	time: Date;
-	creator: string;
-	event?: string;
 }
