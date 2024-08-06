@@ -1,5 +1,5 @@
 import Joi, { ObjectSchema } from "joi";
-import { UserRoles } from "../util/constant";
+import { UserRoles, mimetypes } from "../util/constant";
 
 const registerUserSchema: ObjectSchema = Joi.object({
 	body: {
@@ -20,12 +20,14 @@ const registerUserSchema: ObjectSchema = Joi.object({
 			.label("Phone number")
 			.messages({ "string.pattern.base": "Enter a valid phone number" }),
 		role: Joi.string()
-			.valid(UserRoles.Creator, UserRoles.Eventee)
+			.valid(UserRoles.Organizer, UserRoles.Attendee)
 			.required()
 			.label("User role"),
 		avatar: Joi.string(),
 	},
-	file: Joi.string(),
+	files: Joi.array().items(Joi.string().label("image")).label("Files"),
+
+	mimetypes: Joi.array().items(Joi.string().pattern(mimetypes)),
 });
 
 const loginUserSchema: ObjectSchema = Joi.object({

@@ -21,7 +21,11 @@ const validationMiddleware = (schema: ObjectSchema) => {
 		try {
 			const content: requestContent = { body: req.body };
 
+			console.log(req.file);
+
 			if (req.file) {
+				content.files = [];
+				content.mimetypes = [];
 				content.files?.push(req.file.path);
 				content.mimetypes?.push(req.file.mimetype);
 			}
