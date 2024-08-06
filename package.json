@@ -8,7 +8,8 @@
 		"start": "node ./dist/index.js",
 		"start:dev": "tsx watch ./src",
 		"start:upload_worker": "tsx watch ./src/jobs/image_upload/image_upload.worker.ts",
-		"start:reminder_worker": "tsx watch ./src/jobs/reminder/reminder.worker.ts"
+		"start:reminder_worker": "tsx watch ./src/jobs/reminder/reminder.worker.ts",
+		"start:workers": "tsx watch ./src/jobs/image_upload/image_upload.worker.ts & tsx watch ./src/jobs/reminder/reminder.worker.ts"
 	},
 	"keywords": [],
 	"author": "",

@@ -66,10 +66,10 @@ const uploadToCloudinary = async (job: Job) => {
 	};
 
 	switch (job.name) {
-		case jobNames.singleUpload:
+		case jobNames.SingleUpload:
 			uploadSingleImage();
 			break;
-		case jobNames.multipleUpload:
+		case jobNames.MultipleUpload:
 			uploadMultipleImages();
 			break;
 		default:

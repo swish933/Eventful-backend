@@ -49,10 +49,10 @@ const cleanUpReminders = async () => {
 const processReminderJob = async (job: Job) => {
 	console.log(`Processing ${job.name} at ${new Date().toLocaleTimeString()}`);
 	switch (job.name) {
-		case jobNames.reminder:
+		case jobNames.Reminder:
 			sendDueReminderNotifs();
 			break;
-		case jobNames.reminderCleanUp:
+		case jobNames.ReminderCleanUp:
 			cleanUpReminders();
 			break;
 		default:

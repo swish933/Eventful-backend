@@ -3,7 +3,6 @@ import validationMiddleware from "../../middleware/validation.middleware";
 import { createEventSchema } from "../../validation/event.validation";
 import * as eventController from "../../controllers/event.controller";
 import multer from "multer";
-import { passport } from "../../middleware/auth.middleware";
 import { UserRoles } from "../../util/constant";
 import {
 	verifyRole,
@@ -20,7 +19,7 @@ const upload = multer({
 eventRouter.post(
 	"/",
 	verifyToken,
-	verifyRole([UserRoles.Creator]),
+	verifyRole([UserRoles.Organizer]),
 	upload.array("images", 5),
 	validationMiddleware(createEventSchema),
 	eventController.createEvent

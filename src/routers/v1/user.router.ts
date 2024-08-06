@@ -24,7 +24,7 @@ userRouter.post(
 userRouter.get(
 	"/",
 	verifyToken,
-	verifyRole([UserRoles.Creator, UserRoles.Eventee]),
+	verifyRole([UserRoles.Organizer, UserRoles.Attendee]),
 	userController.getUser
 );
 

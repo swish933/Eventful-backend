@@ -54,8 +54,8 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
 		},
 		role: {
 			type: String,
-			enum: [UserRoles.Creator, UserRoles.Eventee],
-			default: UserRoles.Eventee,
+			enum: [UserRoles.Organizer, UserRoles.Attendee],
+			default: UserRoles.Attendee,
 		},
 		orders: [
 			{

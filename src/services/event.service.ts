@@ -25,7 +25,7 @@ export const createEvent = async (
 		}
 
 		enqueueUploadJob({
-			name: jobNames.multipleUpload,
+			name: jobNames.MultipleUpload,
 			data: { images: files, eventId: data.id },
 		});
 

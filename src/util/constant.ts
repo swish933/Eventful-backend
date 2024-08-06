@@ -1,6 +1,6 @@
 export const enum UserRoles {
-	Creator = "creator",
-	Eventee = "eventee",
+	Organizer = "organizer",
+	Attendee = "attendee",
 }
 
 export const enum EventType {
@@ -14,15 +14,15 @@ export const enum resourceStatus {
 }
 
 export const enum queueName {
-	Images = "Images",
-	Reminders = "Reminders",
+	Images = "images",
+	Reminders = "reminders",
 }
 
 export const enum jobNames {
-	singleUpload = "singleUpload",
-	multipleUpload = "multipleUpload",
-	reminder = "reminder",
-	reminderCleanUp = "reminderCleanUp",
+	SingleUpload = "singleUpload",
+	MultipleUpload = "multipleUpload",
+	Reminder = "reminder",
+	ReminderCleanUp = "reminderCleanUp",
 }
 
 export const mimetypes = /image\/png|image\/jpeg|image\/jpg|image\/webp/;

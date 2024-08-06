@@ -32,7 +32,7 @@ export const registerUser = async (
 
 			if (req.file) {
 				enqueueUploadJob({
-					name: jobNames.singleUpload,
+					name: jobNames.SingleUpload,
 					data: { image: req.file?.path, userId: user.id },
 				});
 			}
