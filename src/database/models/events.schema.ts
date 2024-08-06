@@ -5,6 +5,7 @@ export interface IEvent {
 	name: string;
 	images: string[];
 	description: string;
+	price: number;
 	location: string;
 	organizer: Types.ObjectId;
 	startsAt: Date;
@@ -35,6 +36,10 @@ const EventSchema = new Schema<IEvent, EventModel>(
 		description: {
 			type: String,
 			trim: true,
+			required: true,
+		},
+		price: {
+			type: Number,
 			required: true,
 		},
 		location: {
