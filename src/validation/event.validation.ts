@@ -8,7 +8,7 @@ const createEventSchema: ObjectSchema = Joi.object({
 			.min(6)
 			.required()
 			.messages({ "string.min": "Add a longer description" }),
-		price: Joi.number().min(0).required(),
+		price: Joi.number().min(0).required().label("Set a price"),
 		location: Joi.string().required(),
 		startsAt: Joi.date().greater("now").required().label("Event start-time"),
 		endsAt: Joi.date()

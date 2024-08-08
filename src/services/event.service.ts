@@ -34,3 +34,15 @@ export const createEvent = async (
 		throw new ErrorWithStatus(error.message, 500);
 	}
 };
+
+export const getEventById = async (eventId: string): Promise<IEvent> => {
+	try {
+		const event = await EventModel.findById(eventId);
+		if (!event) {
+			throw new ErrorWithStatus("Event not found", 404);
+		}
+		return event;
+	} catch (error: any) {
+		throw new ErrorWithStatus(error.message, 500);
+	}
+};

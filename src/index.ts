@@ -1,18 +1,20 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
+import { connectToMongoDB } from "./database/connection";
+import redis from "./integrations/redis";
 import authRouter from "./routers/v1/auth.router";
 import userRouter from "./routers/v1/user.router";
-import errorHandler from "./middleware/error.middleware";
-import { connectToMongoDB } from "./database/connection";
-import morgan from "morgan";
 import eventRouter from "./routers/v1/event.router";
-import redis from "./integrations/redis";
-import {
-	enqueueReminderJob,
-	cleanUpOpts,
-	reminderOpts,
-} from "./jobs/reminder/reminder.queue";
-import { jobNames } from "./util/constant";
+import orderRouter from "./routers/v1/order.router";
+import errorHandler from "./middleware/error.middleware";
+
+// import {
+// 	enqueueReminderJob,
+// 	cleanUpOpts,
+// 	reminderOpts,
+// } from "./jobs/reminder/reminder.queue";
+// import { jobNames } from "./util/constant";
 
 dotenv.config();
 
@@ -41,6 +43,7 @@ app.use(express.json());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/events", eventRouter);
+app.use("/api/v1/orders", orderRouter);
 
 //Catch all route
 app.all("*", (_req: Request, res: Response) => {
