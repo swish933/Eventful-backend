@@ -13,6 +13,12 @@ export const enum resourceStatus {
 	Completed = "completed",
 }
 
+export const enum orderStatus {
+	Pending = "pending",
+	Successful = "successful",
+	Failed = "failed",
+}
+
 export const enum queueName {
 	Images = "images",
 	Reminders = "reminders",

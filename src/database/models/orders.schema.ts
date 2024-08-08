@@ -1,8 +1,9 @@
 import { Schema, model, Types, Model } from "mongoose";
-import { resourceStatus } from "../../util/constant";
+import { orderStatus } from "../../util/constant";
 
 export interface IOrder {
-	orderAmount: number;
+	id: string;
+	amount: number;
 	qrCode?: string;
 	status: string;
 	customer: Types.ObjectId;
@@ -15,7 +16,7 @@ type OrderModel = Model<IOrder>;
 
 const OrderSchema = new Schema<IOrder, OrderModel>(
 	{
-		orderAmount: {
+		amount: {
 			type: Number,
 			required: true,
 		},
@@ -25,16 +26,18 @@ const OrderSchema = new Schema<IOrder, OrderModel>(
 		},
 		status: {
 			type: String,
-			enum: [resourceStatus.Pending, resourceStatus.Completed],
-			default: resourceStatus.Pending,
+			enum: [orderStatus.Pending, orderStatus.Failed, orderStatus.Successful],
+			default: orderStatus.Pending,
 		},
 		customer: {
 			type: Schema.Types.ObjectId,
 			ref: "User",
+			required: true,
 		},
 		event: {
 			type: Schema.Types.ObjectId,
 			ref: "Event",
+			required: true,
 		},
 	},
 	{ timestamps: true }

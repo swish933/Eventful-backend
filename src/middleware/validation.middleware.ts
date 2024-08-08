@@ -3,8 +3,13 @@ import Joi, { ObjectSchema } from "joi";
 import { ICreateUserDto, ILoginUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { ICreateEventDto } from "../types/dtos/event.dto";
+import { IOrderDto } from "../types/dtos/order.dto";
 
-type validationSchemaUnion = ICreateUserDto | ILoginUserDto | ICreateEventDto;
+type validationSchemaUnion =
+	| ICreateUserDto
+	| ILoginUserDto
+	| ICreateEventDto
+	| IOrderDto;
 
 type requestContent = {
 	body: object;
@@ -20,8 +25,6 @@ const validationMiddleware = (schema: ObjectSchema) => {
 	) => {
 		try {
 			const content: requestContent = { body: req.body };
-
-			console.log(req.file);
 
 			if (req.file) {
 				content.files = [];
