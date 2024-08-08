@@ -2,6 +2,7 @@ import { Schema, model, Types, Model } from "mongoose";
 import { resourceStatus } from "../../util/constant";
 
 export interface IReminder {
+	id: string;
 	time: Date;
 	status: string;
 	reminderOwner: Types.ObjectId;

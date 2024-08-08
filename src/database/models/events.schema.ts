@@ -2,6 +2,7 @@ import { Schema, model, Types, Model } from "mongoose";
 import { EventType } from "../../util/constant";
 
 export interface IEvent {
+	id: string;
 	name: string;
 	images: string[];
 	description: string;
