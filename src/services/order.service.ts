@@ -51,9 +51,12 @@ export async function updateOrder(orderId: string, event: string) {
 	}
 }
 
-export async function getOrder(orderId: string): Promise<IOrder> {
+export async function getOrder(
+	orderId: string,
+	userId: string
+): Promise<IOrder> {
 	try {
-		const order = await OrderModel.findById(orderId);
+		const order = await OrderModel.findOne({ _id: orderId, customer: userId });
 
 		if (!order) {
 			throw new ErrorWithStatus("Resource not found", 404);

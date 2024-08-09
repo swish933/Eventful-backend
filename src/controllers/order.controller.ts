@@ -15,11 +15,11 @@ export async function initiateTransaction(
 	next: NextFunction
 ) {
 	try {
-		const { eventId } = req.body;
+		const { eventId, tickets } = req.body;
 		const customerId = req.user.id;
 
 		const event = await getEventById(eventId);
-		const amount = event.price;
+		const amount = event.price * tickets;
 
 		const transaction = await orderService.newOrder(
 			amount,
@@ -78,7 +78,7 @@ export async function getOrder(
 ) {
 	try {
 		const { orderId } = req.params;
-		const order = await orderService.getOrder(orderId);
+		const order = await orderService.getOrder(orderId, req.user.id);
 		res.json({ message: "Order", payload: order });
 	} catch (error: any) {
 		next(error);
