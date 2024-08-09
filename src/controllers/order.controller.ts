@@ -60,13 +60,40 @@ export async function updateOrder(
 		const event = body.event;
 		const id = body.data.reference;
 
-		console.log(req.body);
 		await orderService.updateOrder(id, event);
 		console.log("Transaction found", body.data.reference);
 
 		return res.status(200).json({
 			message: "Callback received",
 		});
+	} catch (error: any) {
+		next(error);
+	}
+}
+
+export async function getOrder(
+	req: Request<{ orderId: string }>,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) {
+	try {
+		const { orderId } = req.params;
+		const order = await orderService.getOrder(orderId);
+		res.json({ message: "Order", payload: order });
+	} catch (error: any) {
+		next(error);
+	}
+}
+
+export async function getPaymentInfo(
+	req: Request<{ orderId: string }>,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) {
+	try {
+		const { orderId } = req.params;
+		const paymentInformation = await orderService.getPaymentInfo(orderId);
+		res.json({ message: "Order", payload: paymentInformation });
 	} catch (error: any) {
 		next(error);
 	}

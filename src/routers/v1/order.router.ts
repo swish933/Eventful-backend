@@ -22,4 +22,12 @@ orderRouter.get("/paystack/success", orderController.verifyOrder);
 
 orderRouter.post("/paystack/callback", orderController.updateOrder);
 
+orderRouter.get("/:orderId", verifyToken, orderController.getOrder);
+
+orderRouter.get(
+	"/payment_verification/:orderId",
+	verifyToken,
+	orderController.getPaymentInfo
+);
+
 export default orderRouter;
