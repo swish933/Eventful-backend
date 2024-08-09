@@ -1,11 +1,13 @@
-import { Schema, model, Model } from "mongoose";
-import { OrderStatus } from "../../util/constant";
+import { Schema, model, Types, Model } from "mongoose";
+import { orderStatus } from "../../util/constant";
 
 export interface IOrder {
-	orderAmount: number;
-	qrCode: string;
-	orderNumber: string;
+	id: string;
+	amount: number;
+	qrCode?: string;
 	status: string;
+	customer: Types.ObjectId;
+	event: Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -14,7 +16,7 @@ type OrderModel = Model<IOrder>;
 
 const OrderSchema = new Schema<IOrder, OrderModel>(
 	{
-		orderAmount: {
+		amount: {
 			type: Number,
 			required: true,
 		},
@@ -22,16 +24,20 @@ const OrderSchema = new Schema<IOrder, OrderModel>(
 			type: String,
 			default: null,
 		},
-		orderNumber: {
-			type: String,
-			unique: true,
-			required: true,
-			trim: true,
-		},
 		status: {
 			type: String,
-			enum: [OrderStatus.Pending, OrderStatus.Completed],
-			default: OrderStatus.Pending,
+			enum: [orderStatus.Pending, orderStatus.Failed, orderStatus.Successful],
+			default: orderStatus.Pending,
+		},
+		customer: {
+			type: Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
+		},
+		event: {
+			type: Schema.Types.ObjectId,
+			ref: "Event",
+			required: true,
 		},
 	},
 	{ timestamps: true }

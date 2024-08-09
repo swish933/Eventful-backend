@@ -9,33 +9,27 @@ import {
 	StrategyOptionsWithoutRequest,
 } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
-import UserModel from "../models/schemas/users.schema";
+import UserModel from "../database/models/users.schema";
 import { Request } from "express";
-import { ICreateUserDto } from "../dtos/user.dto";
+import { ICreateUserDto } from "../types/dtos/user.dto";
 
-const jwtStrategyOpts: StrategyOptionsWithoutRequest = {
-	secretOrKey: process.env.JWT_SECRET ?? "secret",
-	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+const loginErrorMsg = "Username/Email or Password is incorrect";
+const loginSuccessMsg = "Logged in Successfully";
+
+const logInStrategyOpts: IStrategyOptions = {
+	usernameField: "user",
+	passwordField: "password",
 };
-
-// passport.use(
-// 	new JWTstrategy(jwtStrategyOpts, async (token, done) => {
-// 		try {
-// 			return done(null, token.user);
-// 		} catch (error) {
-// 			done(error);
-// 		}
-// 	})
-// );
-
-// This middleware saves the information provided by the user to the database,
-// and then sends the user information to the next middleware if successful.
-// Otherwise, it reports an error.
 
 const signUpStartegyOpts: IStrategyOptionsWithRequest = {
 	usernameField: "email",
 	passwordField: "password",
 	passReqToCallback: true,
+};
+
+const jwtStrategyOpts: StrategyOptionsWithoutRequest = {
+	secretOrKey: process.env.JWT_SECRET ?? "secret",
+	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
 passport.use(
@@ -59,15 +53,6 @@ passport.use(
 	)
 );
 
-// This middleware authenticates the user based on the email and password provided.
-// If the user is found, it sends the user information to the next middleware.
-// Otherwise, it reports an error.
-
-const logInStrategyOpts: IStrategyOptions = {
-	usernameField: "user",
-	passwordField: "password",
-};
-
 passport.use(
 	"login",
 	new LocalStrategy(logInStrategyOpts, async (user, password, done) => {
@@ -77,21 +62,30 @@ passport.use(
 			});
 
 			if (!existingUser) {
-				return done(null, false, { message: "User not found" });
+				return done(null, false, { message: loginErrorMsg });
 			}
 
 			const validate: boolean = await existingUser.isValidPassword(password);
 
 			if (!validate) {
-				return done(null, undefined, {
-					message: "Email or Password is incorrect",
+				return done(null, false, {
+					message: loginErrorMsg,
 				});
 			}
 
-			return done(null, existingUser, { message: "Logged in Successfully" });
+			return done(null, existingUser, { message: loginSuccessMsg });
 		} catch (error: any) {
-			console.log(error.message);
 			return done(error);
+		}
+	})
+);
+
+passport.use(
+	new JWTstrategy(jwtStrategyOpts, async (decoded, done) => {
+		try {
+			return done(null, decoded);
+		} catch (error) {
+			done(error);
 		}
 	})
 );

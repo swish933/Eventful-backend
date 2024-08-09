@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 const errorHandler = (
 	error: IErrorWithStatus,
-	req: Request,
+	_req: Request,
 	res: Response<IErrorResponse>,
 	next: NextFunction
 ) => {
