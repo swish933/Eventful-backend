@@ -25,7 +25,10 @@ export async function newOrder(
 	}
 }
 
-export async function updateOrder(orderId: string, event: string) {
+export async function updateOrder(
+	orderId: string,
+	event: string
+): Promise<IOrder> {
 	try {
 		const order = await OrderModel.findOne({
 			_id: orderId,
@@ -42,9 +45,9 @@ export async function updateOrder(orderId: string, event: string) {
 			order.status = orderStatus.Successful;
 			order.qrCode = await generateQrCode(qrcodeLink);
 			await order.save();
+			return order;
 		} else {
-			order.status = orderStatus.Failed;
-			await order.save();
+			throw new Error("Payment Failed");
 		}
 	} catch (error: any) {
 		throw new ErrorWithStatus(error.message, 500);
