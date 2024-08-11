@@ -4,12 +4,14 @@ import { ICreateUserDto, ILoginUserDto } from "../types/dtos/user.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { ICreateEventDto } from "../types/dtos/event.dto";
 import { IOrderDto } from "../types/dtos/order.dto";
+import { IReminderDto } from "../types/dtos/reminder.dto";
 
 type validationSchemaUnion =
 	| ICreateUserDto
 	| ILoginUserDto
 	| ICreateEventDto
-	| IOrderDto;
+	| IOrderDto
+	| IReminderDto;
 
 type requestContent = {
 	body: object;
