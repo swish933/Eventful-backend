@@ -1,24 +1,17 @@
 import EventModel from "../database/models/events.schema";
-import ReminderModel from "../database/models/reminder.schema";
 import { IEvent } from "../database/models/events.schema";
 import { ICreateEventDto } from "../types/dtos/event.dto";
-import { IReminderDto } from "../types/dtos/reminder.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { enqueueUploadJob } from "../jobs/image_upload/image_upload.queue";
 import { jobNames } from "../util/constant";
+import { Types } from "mongoose";
 
 export const createEvent = async (
 	body: ICreateEventDto,
-	files: string[],
-	reminderDto: IReminderDto
+	files: string[]
 ): Promise<IEvent> => {
 	try {
 		const data = await EventModel.create(body);
-
-		if (body.reminderTime) {
-			reminderDto.event = data.id;
-			await ReminderModel.create(reminderDto);
-		}
 
 		if (!data) {
 			throw new ErrorWithStatus("An error occured. Please try again", 500);
@@ -44,5 +37,23 @@ export const getEventById = async (eventId: string): Promise<IEvent> => {
 		return event;
 	} catch (error: any) {
 		throw new ErrorWithStatus(error.message, 500);
+	}
+};
+
+export const updateEvent = async (
+	eventId: Types.ObjectId,
+	customerId: Types.ObjectId
+) => {
+	try {
+		const updatedEvent = await EventModel.findOneAndUpdate(
+			{ _id: eventId },
+			{ $push: { customers: customerId } }
+		);
+
+		if (!updatedEvent) {
+			throw new ErrorWithStatus("Event not found", 404);
+		}
+	} catch (error: any) {
+		throw new ErrorWithStatus(error.message, error.status);
 	}
 };
