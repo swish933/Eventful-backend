@@ -77,6 +77,14 @@ const sendReminderNotifs = async () => {
 
 const cleanUpReminders = async () => {
 	//remove all reminders with a status of complete
+	try {
+		// const filter = {status}
+		await ReminderModel.deleteMany({ status: resourceStatus.Completed });
+		console.log("Deleted completed reminders");
+	} catch (error: any) {
+		console.error(error);
+		throw new ErrorWithStatus(error.message, 500);
+	}
 };
 
 const processReminderJob = async (job: Job) => {
