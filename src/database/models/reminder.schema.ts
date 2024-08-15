@@ -31,7 +31,7 @@ const ReminderSchema = new Schema<IReminder, ReminderModel>(
 		},
 		event: {
 			type: Schema.Types.ObjectId,
-			ref: "User",
+			ref: "Event",
 			required: true,
 		},
 	},

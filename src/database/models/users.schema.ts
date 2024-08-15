@@ -1,4 +1,4 @@
-import { Schema, Model, model, Types, DefaultSchemaOptions } from "mongoose";
+import { Schema, Model, model, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserRoles } from "../../util/constant";
 

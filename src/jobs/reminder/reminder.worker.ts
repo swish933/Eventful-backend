@@ -1,59 +1,100 @@
-import { Job, Worker } from "bullmq";
-import { IReminderJobDto } from "../../types/job.types";
-import ReminderModel, {
-	IReminder,
-} from "../../database/models/reminder.schema";
-import { queueName, jobNames, UserRoles } from "../../util/constant";
 import { connectToMongoDB } from "../../database/connection";
+import { Job, Worker } from "bullmq";
+import { queueName, jobNames, UserRoles } from "../../util/constant";
 import { ErrorWithStatus } from "../../exceptions/error-with-status";
+import { IReminderJobDto } from "../../types/job.types";
+import { IEvent } from "../../database/models/events.schema";
+import { IUser } from "../../database/models/users.schema";
+import ReminderModel from "../../database/models/reminder.schema";
+import User from "../../database/models/users.schema";
+import Event from "../../database/models/events.schema";
+import {
+	enqueueReminderJob,
+	cleanUpOpts,
+	reminderOpts,
+} from "../reminder/reminder.queue";
+import { resourceStatus } from "../../util/constant";
+import { sendEmail } from "../../integrations/mailgun";
 
 const redisHost = process.env.REDIS_HOST || "127.0.0.1";
 const redisPort = Number(process.env.REDIS_PORT) || 6379;
 
-const findDueReminders = async (): Promise<IReminder[]> => {
+const sendReminderNotifs = async () => {
 	try {
-		const filter = { time: Date.now() };
-		const reminders = await ReminderModel.find(filter).populate([
-			"event",
-			"reminderOwner",
-		]);
+		const timeNow = Date.now();
+		const filter = {
+			time: { $lte: timeNow },
+			status: resourceStatus.Pending,
+		};
+
+		const reminders = await ReminderModel.find(filter)
+			.populate<{ reminderOwner: IUser }>({
+				path: "reminderOwner",
+				select: "email username role",
+				model: User,
+			})
+			.populate<{ event: IEvent }>({
+				path: "event",
+				select: "name location startsAt customers",
+				model: Event,
+				populate: {
+					path: "customers",
+					select: "email -_id",
+					model: User,
+					transform: (doc: IUser) => (doc == null ? null : doc.email),
+				},
+			})
+			.select("-createdAt -updatedAt");
+
 		if (!reminders) {
-			throw new ErrorWithStatus("No reminders currently", 404);
+			console.log("No reminders right now");
+			return;
 		}
 
-		return reminders;
+		for (const reminder of reminders) {
+			sendEmail({
+				from: "Eventful",
+				to:
+					reminder.reminderOwner.role === UserRoles.Attendee
+						? reminder.reminderOwner.email
+						: reminder.event.customers.toString(),
+				subject: `[${reminder.event.name}] reminder`,
+				template: "eventftul_event_reminder",
+				"t:variables": JSON.stringify({
+					title: reminder.event.name,
+					dateTime: reminder.event.startsAt.toString(),
+				}),
+			});
+
+			reminder.status = resourceStatus.Completed;
+			await reminder.save();
+		}
 	} catch (error: any) {
+		console.error(error);
 		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
-const sendDueReminderNotifs = async () => {
-	const dueReminders = await findDueReminders();
-
-	dueReminders.forEach((reminder) => {
-		// if (reminder.reminderOwner.role === UserRoles.Creator) {
-		/**  send mail to all users in that reminder's event customers/orders array.
-			     ==> reminder.event.customers (reminder.event.populate().customers[]) 
-			 */
-		// emailService();
-		// } else {
-		/**send email to reminder.reminderOwner.email */
-		// }
-	});
-};
-
 const cleanUpReminders = async () => {
 	//remove all reminders with a status of complete
+	try {
+		// const filter = {status}
+		await ReminderModel.deleteMany({ status: resourceStatus.Completed });
+		console.log("Deleted completed reminders");
+	} catch (error: any) {
+		console.error(error);
+		throw new ErrorWithStatus(error.message, 500);
+	}
 };
 
 const processReminderJob = async (job: Job) => {
 	console.log(`Processing ${job.name} at ${new Date().toLocaleTimeString()}`);
 	switch (job.name) {
 		case jobNames.Reminder:
-			sendDueReminderNotifs();
+			await sendReminderNotifs();
 			break;
 		case jobNames.ReminderCleanUp:
-			cleanUpReminders();
+			await cleanUpReminders();
 			break;
 		default:
 			return;
@@ -77,4 +118,19 @@ worker.on("failed", (job, err) => {
 });
 
 connectToMongoDB();
+
+(async () => {
+	await enqueueReminderJob({
+		name: jobNames.Reminder,
+		opts: reminderOpts,
+	});
+})();
+
+(async () => {
+	await enqueueReminderJob({
+		name: jobNames.ReminderCleanUp,
+		opts: cleanUpOpts,
+	});
+})();
+
 console.log("Reminder Worker started!");

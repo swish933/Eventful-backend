@@ -12,8 +12,7 @@ export interface IEvent {
 	startsAt: Date;
 	endsAt: Date;
 	eventType: string;
-	customers?: Types.ObjectId[];
-	orders?: Types.ObjectId[];
+	customers: Types.ObjectId[];
 	reminder?: Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
@@ -73,16 +72,10 @@ const EventSchema = new Schema<IEvent, EventModel>(
 				ref: "User",
 			},
 		],
-		orders: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: "Order",
-			},
-		],
-		reminder: {
-			type: Schema.Types.ObjectId,
-			ref: "Reminder",
-		},
+		// reminder: {
+		// 	type: Schema.Types.ObjectId,
+		// 	ref: "Reminder",
+		// },
 	},
 	{ timestamps: true }
 );
