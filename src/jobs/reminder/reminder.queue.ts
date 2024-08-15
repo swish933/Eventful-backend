@@ -24,12 +24,12 @@ const cleanUpOpts: JobsOptions = {
 	removeOnComplete: true,
 	removeOnFail: true,
 	repeat: {
-		pattern: "* * * * *",
+		pattern: "0 0 * * *",
 	},
 };
 
 const enqueueReminderJob = async function (job: IReminderJobDto) {
-	console.log("Adding reminder job to queue");
+	console.log(`Adding ${job.name} job to queue`);
 	reminderQueue.add(job.name, job.data, job.opts);
 };
 

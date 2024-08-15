@@ -10,13 +10,6 @@ import orderRouter from "./routers/v1/order.router";
 import reminderRouter from "./routers/v1/reminder.router";
 import errorHandler from "./middleware/error.middleware";
 
-// import {
-// 	enqueueReminderJob,
-// 	cleanUpOpts,
-// 	reminderOpts,
-// } from "./jobs/reminder/reminder.queue";
-// import { jobNames } from "./util/constant";
-
 dotenv.config();
 
 const app: Express = express();
@@ -24,20 +17,6 @@ const PORT = process.env.PORT || "3000";
 
 connectToMongoDB();
 redis.connect();
-
-// (async () => {
-// 	await enqueueReminderJob({
-// 		name: jobNames.reminder,
-// 		opts: reminderOpts,
-// 	});
-// })();
-
-// (async () => {
-// 	await enqueueReminderJob({
-// 		name: jobNames.reminderCleanUp,
-// 		opts: cleanUpOpts,
-// 	});
-// })();
 
 app.use(morgan("dev"));
 app.use(express.json());
