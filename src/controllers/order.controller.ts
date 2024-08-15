@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as orderService from "../services/order.service";
-import { getEventById, updateEvent } from "../services/event.service";
+import { getEventById, updateEventCustomers } from "../services/event.service";
 import { IOrderDto } from "../types/dtos/order.dto";
 import { AxiosResponse } from "axios";
 import { initializePaystackTransaction } from "../integrations/paystack";
@@ -8,7 +8,6 @@ import {
 	paystackTransactionData,
 	paystackResponseData,
 } from "../types/paystack.types";
-import Event from "../database/models/events.schema";
 
 export async function initiateTransaction(
 	req: Request<{}, {}, IOrderDto, {}>,
@@ -65,7 +64,7 @@ export async function updateOrder(
 		const customerId = updatedOrder.customer;
 		const eventId = updatedOrder.event;
 
-		await updateEvent(eventId, customerId);
+		await updateEventCustomers(eventId, customerId);
 
 		console.log("Transaction & Event updated", body.data.reference);
 
