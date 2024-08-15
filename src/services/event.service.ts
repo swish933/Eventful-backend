@@ -40,7 +40,7 @@ export const getEventById = async (eventId: string): Promise<IEvent> => {
 	}
 };
 
-export const updateEvent = async (
+export const updateEventCustomers = async (
 	eventId: Types.ObjectId,
 	customerId: Types.ObjectId
 ) => {
