@@ -36,13 +36,20 @@ eventRouter.get(
 	eventController.getAllEvents
 );
 
-eventRouter.get("/:eventId", verifyToken, eventController.getEventById);
-
 eventRouter.get(
 	"/analytics",
 	verifyToken,
 	verifyRole([UserRoles.Organizer]),
-	eventController.getAnalytics
+	eventController.getAllTimeAnalytics
+);
+
+eventRouter.get("/:eventId", verifyToken, eventController.getEventById);
+
+eventRouter.get(
+	"/analytics/:eventId",
+	verifyToken,
+	verifyRole([UserRoles.Organizer]),
+	eventController.getEventAnalytics
 );
 
 export default eventRouter;
