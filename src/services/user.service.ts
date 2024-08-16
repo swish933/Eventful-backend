@@ -32,13 +32,13 @@ export const updateUserEvents = async (
 };
 
 export const getUserEvents = async (id: string) => {
-	const events = await UserModel.findById(id).populate<{ events: IEvent[] }>({
+	const user = await UserModel.findById(id).populate<{ events: IEvent[] }>({
 		path: "events",
 		select: "-customers -createdAt -updatedAt -images",
 		populate: { path: "organizer", select: "avatar username" },
 	});
-	if (!events) {
+	if (!user) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
-	return events;
+	return user.events;
 };
