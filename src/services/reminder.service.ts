@@ -6,15 +6,11 @@ import { ErrorWithStatus } from "../exceptions/error-with-status";
 export async function createReminder(
 	reminderDto: IReminderDto
 ): Promise<IReminder> {
-	try {
-		const newReminder = await ReminderModel.create(reminderDto);
+	const newReminder = await ReminderModel.create(reminderDto);
 
-		if (!newReminder) {
-			throw new ErrorWithStatus("An error occured", 500);
-		}
-
-		return newReminder;
-	} catch (error: any) {
-		throw new ErrorWithStatus(error.message, 500);
+	if (!newReminder) {
+		throw new ErrorWithStatus("An error occured", 500);
 	}
+
+	return newReminder;
 }
