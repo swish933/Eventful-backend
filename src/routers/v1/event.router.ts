@@ -25,4 +25,24 @@ eventRouter.post(
 	eventController.createEvent
 );
 
+eventRouter.get("/myevents", verifyToken, eventController.getEvents);
+
+eventRouter.get("/qrcode/:orderId", eventController.admitAttendee);
+
+eventRouter.get(
+	"/",
+	verifyToken,
+	verifyRole([UserRoles.Attendee]),
+	eventController.getAllEvents
+);
+
+eventRouter.get("/:eventId", verifyToken, eventController.getEventById);
+
+eventRouter.get(
+	"/analytics",
+	verifyToken,
+	verifyRole([UserRoles.Organizer]),
+	eventController.getAnalytics
+);
+
 export default eventRouter;

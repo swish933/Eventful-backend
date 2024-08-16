@@ -10,47 +10,39 @@ export async function newOrder(
 	customerId: string,
 	eventId: string
 ): Promise<IOrder> {
-	try {
-		const newTransaction = OrderModel.create({
-			amount,
-			customer: customerId,
-			event: eventId,
-		});
-		if (!newTransaction) {
-			throw new ErrorWithStatus("An error occured", 500);
-		}
-		return newTransaction;
-	} catch (error: any) {
-		throw new ErrorWithStatus(error.message, 500);
+	const newTransaction = OrderModel.create({
+		amount,
+		customer: customerId,
+		event: eventId,
+	});
+	if (!newTransaction) {
+		throw new ErrorWithStatus("An error occured", 500);
 	}
+	return newTransaction;
 }
 
 export async function updateOrder(
 	orderId: string,
 	event: string
 ): Promise<IOrder> {
-	try {
-		const order = await OrderModel.findOne({
-			_id: orderId,
-			status: orderStatus.Pending,
-		});
+	const order = await OrderModel.findOne({
+		_id: orderId,
+		status: orderStatus.Pending,
+	});
 
-		if (!order) {
-			throw new ErrorWithStatus("Resource not found", 404);
-		}
+	if (!order) {
+		throw new ErrorWithStatus("Resource not found", 404);
+	}
 
-		const qrcodeLink = `${process.env.CLIENT_BASE_URL}/qrcode/${orderId}`;
+	const qrcodeLink = `${process.env.CLIENT_BASE_URL}/api/v1/events/qrcode/${orderId}`;
 
-		if (event === "charge.success") {
-			order.status = orderStatus.Successful;
-			order.qrCode = await generateQrCode(qrcodeLink);
-			await order.save();
-			return order;
-		} else {
-			throw new Error("Payment Failed");
-		}
-	} catch (error: any) {
-		throw new ErrorWithStatus(error.message, 500);
+	if (event === "charge.success") {
+		order.status = orderStatus.Successful;
+		order.qrCode = await generateQrCode(qrcodeLink);
+		await order.save();
+		return order;
+	} else {
+		throw new Error("Payment Failed");
 	}
 }
 
@@ -58,49 +50,49 @@ export async function getOrder(
 	orderId: string,
 	userId: string
 ): Promise<IOrder> {
-	try {
-		const order = await OrderModel.findOne({ _id: orderId, customer: userId });
+	const order = await OrderModel.findOne({ _id: orderId, customer: userId });
 
-		if (!order) {
-			throw new ErrorWithStatus("Resource not found", 404);
-		}
-
-		return order;
-	} catch (error: any) {
-		throw new ErrorWithStatus(error.message, 500);
+	if (!order) {
+		throw new ErrorWithStatus("Resource not found", 404);
 	}
+
+	return order;
+}
+
+export async function getOrderEvent(orderId: string) {
+	const order = await OrderModel.findById(orderId);
+	if (!order) {
+		throw new ErrorWithStatus("Order not found", 404);
+	}
+	return order.event;
 }
 
 export async function getPaymentInfo(orderId: string) {
-	try {
-		const order = await OrderModel.findOne({
-			_id: orderId,
-			status: orderStatus.Successful,
+	const order = await OrderModel.findOne({
+		_id: orderId,
+		status: orderStatus.Successful,
+	})
+		.populate<{ event: IEvent }>({
+			path: "event",
+			select: ["name", "location", "price"],
 		})
-			.populate<{ event: IEvent }>({
-				path: "event",
-				select: ["name", "location", "price"],
-			})
-			.populate<{ customer: IUser }>({
-				path: "customer",
-				select: "email",
-			});
+		.populate<{ customer: IUser }>({
+			path: "customer",
+			select: "email",
+		});
 
-		if (!order) {
-			throw new ErrorWithStatus("Resource not found", 404);
-		}
-
-		const admits = order.amount / order.event.price;
-
-		const paymentInfo = {
-			event: order.event.name,
-			location: order.event.location,
-			customer: order.customer.email,
-			admits,
-		};
-
-		return paymentInfo;
-	} catch (error: any) {
-		throw new ErrorWithStatus(error.message, 500);
+	if (!order) {
+		throw new ErrorWithStatus("Resource not found", 404);
 	}
+
+	const admits = order.amount / order.event.price;
+
+	const paymentInfo = {
+		event: order.event.name,
+		location: order.event.location,
+		customer: order.customer.email,
+		admits,
+	};
+
+	return paymentInfo;
 }

@@ -13,7 +13,8 @@ export interface IEvent {
 	endsAt: Date;
 	eventType: string;
 	customers: Types.ObjectId[];
-	reminder?: Types.ObjectId;
+	ticketsSold: number;
+	admitted: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -72,10 +73,12 @@ const EventSchema = new Schema<IEvent, EventModel>(
 				ref: "User",
 			},
 		],
-		// reminder: {
-		// 	type: Schema.Types.ObjectId,
-		// 	ref: "Reminder",
-		// },
+		ticketsSold: {
+			type: Number,
+		},
+		admitted: {
+			type: Number,
+		},
 	},
 	{ timestamps: true }
 );

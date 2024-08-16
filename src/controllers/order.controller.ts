@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import * as orderService from "../services/order.service";
-import { getEventById, updateEventCustomers } from "../services/event.service";
+import {
+	getEventById,
+	updateEventCustomers,
+	updateEventTickets,
+} from "../services/event.service";
+import { updateUserEvents } from "../services/user.service";
 import { IOrderDto } from "../types/dtos/order.dto";
 import { AxiosResponse } from "axios";
 import { initializePaystackTransaction } from "../integrations/paystack";
@@ -63,10 +68,13 @@ export async function updateOrder(
 		const updatedOrder = await orderService.updateOrder(id, event);
 		const customerId = updatedOrder.customer;
 		const eventId = updatedOrder.event;
+		const amountPaid = updatedOrder.amount;
 
 		await updateEventCustomers(eventId, customerId);
+		await updateUserEvents(eventId, customerId);
+		await updateEventTickets(eventId, amountPaid);
 
-		console.log("Transaction & Event updated", body.data.reference);
+		console.log("Transaction, Event and User updated", body.data.reference);
 
 		return res.status(200).json({
 			message: "Callback received",

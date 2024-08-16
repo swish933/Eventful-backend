@@ -3,6 +3,10 @@ import * as eventService from "../services/event.service";
 import { createReminder } from "../services/reminder.service";
 import { ICreateEventDto } from "../types/dtos/event.dto";
 import { IReminderDto } from "../types/dtos/reminder.dto";
+import { UserRoles } from "../util/constant";
+import { getUserEvents, updateUserEvents } from "../services/user.service";
+import { Types } from "mongoose";
+import { getOrderEvent } from "../services/order.service";
 
 export const createEvent = async (
 	req: Request<{}, {}, ICreateEventDto, {}>,
@@ -23,6 +27,11 @@ export const createEvent = async (
 
 		const newEvent = await eventService.createEvent(body, files);
 
+		await updateUserEvents(
+			new Types.ObjectId(newEvent.id),
+			new Types.ObjectId(req.user.id)
+		);
+
 		if (body.reminderTime) {
 			const reminderDto: IReminderDto = {
 				time,
@@ -34,6 +43,80 @@ export const createEvent = async (
 		}
 
 		res.json({ message: "Event created", payload: newEvent });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getAllEvents = async (
+	req: Request,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) => {
+	try {
+		const events = await eventService.getAllEvents();
+		res.json({ message: "Events", payload: events });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getEventById = async (
+	req: Request,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) => {
+	try {
+		const { eventId } = req.params;
+		const event = await eventService.getEventById(eventId);
+		res.json({ message: "Event", payload: event });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getEvents = async (
+	req: Request,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) => {
+	try {
+		if (req.user.role === UserRoles.Attendee) {
+			const events = await getUserEvents(req.user.id);
+			return res.json({ message: "events", payload: events });
+		} else {
+			const events = await eventService.getEvents(req.user.id);
+			return res.json({ message: "events", payload: events });
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+export async function admitAttendee(
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	try {
+		const { orderId } = req.params;
+		const eventId = await getOrderEvent(orderId);
+		await eventService.admitAttendee(eventId.toString());
+		res.json({ message: "User successfully admitted" });
+	} catch (error: any) {
+		next(error);
+	}
+}
+
+export const getAnalytics = async (
+	req: Request<{}, {}, {}, { eventId: string | undefined }>,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) => {
+	try {
+		let { eventId } = req.query;
+		const analytics = await eventService.getAnalytics(eventId, req.user.id);
+		return res.json({ message: "analytics", payload: analytics });
 	} catch (error) {
 		next(error);
 	}
