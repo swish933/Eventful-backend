@@ -39,7 +39,7 @@ export const getEventById = async (eventId: string): Promise<IEvent> => {
 };
 
 export const getAllEvents = async (): Promise<IEvent[]> => {
-	const events = await EventModel.find({}).select(
+	const events = await EventModel.find({ endsAt: { $gt: Date.now() } }).select(
 		"-customers -createdAt -updatedAt -admitted"
 	);
 	if (!events) {
