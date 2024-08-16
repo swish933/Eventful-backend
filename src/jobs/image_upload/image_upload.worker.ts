@@ -9,6 +9,8 @@ import { connectToMongoDB } from "../../database/connection";
 
 const redisHost = process.env.REDIS_HOST || "127.0.0.1";
 const redisPort = Number(process.env.REDIS_PORT) || 6379;
+const redisPassword = process.env.REDIS_PASSWORD;
+const redisUserName = process.env.REDIS_USERNAME;
 
 const uploadToCloudinary = async (job: Job) => {
 	console.log("Uploading assets to cloudinary");
@@ -81,7 +83,12 @@ const worker = new Worker<IImageUploadJobDto>(
 	queueName.Images,
 	uploadToCloudinary,
 	{
-		connection: { port: redisPort, host: redisHost },
+		connection: {
+			host: redisHost,
+			port: redisPort,
+			username: redisUserName,
+			password: redisPassword,
+		},
 	}
 );
 
