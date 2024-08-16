@@ -50,7 +50,10 @@ export async function getOrder(
 	orderId: string,
 	userId: string
 ): Promise<IOrder> {
-	const order = await OrderModel.findOne({ _id: orderId, customer: userId });
+	const order = await OrderModel.findOne({
+		_id: orderId,
+		customer: userId,
+	}).populate({ path: "customer event" });
 
 	if (!order) {
 		throw new ErrorWithStatus("Resource not found", 404);

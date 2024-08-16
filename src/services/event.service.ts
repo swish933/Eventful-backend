@@ -1,5 +1,4 @@
 import EventModel, { IEvent } from "../database/models/events.schema";
-import OrderModel from "../database/models/orders.schema";
 import { IUser } from "../database/models/users.schema";
 import { ICreateEventDto } from "../types/dtos/event.dto";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
@@ -103,56 +102,65 @@ export const admitAttendee = async (eventId: string) => {
 	}
 };
 
-export const getAnalytics = async (
-	eventId: string | undefined,
+export const getEventAnalytics = async (
+	eventId: string,
 	organizerId: string
-) => {
+): Promise<Analytics> => {
 	const analytics: Analytics = {
 		attendees: 0,
 		tickets: 0,
 		scannedCodes: 0,
 	};
 
-	if (eventId) {
-		const event = await EventModel.findOne({
-			_id: eventId,
-			organizer: organizerId,
-		});
+	const event = await EventModel.findOne({
+		_id: eventId,
+		organizer: organizerId,
+	});
 
-		if (!event) {
-			throw new ErrorWithStatus("Event not found", 404);
-		}
-
-		analytics.attendees += event.customers.length;
-		analytics.tickets += event.ticketsSold;
-		analytics.scannedCodes += event.admitted;
-	} else {
-		const events = await EventModel.find({ organizer: organizerId });
-
-		if (!events) {
-			throw new ErrorWithStatus("Events not found", 404);
-		}
-
-		const initialValue = 0;
-
-		const allTimeTickets = events.reduce(
-			(accumulator, event) => accumulator + event.ticketsSold,
-			initialValue
-		);
-
-		const allTimeAttendees = events.reduce(
-			(accumulator, event) => accumulator + event.customers.length,
-			initialValue
-		);
-		const allTimeAdmitted = events.reduce(
-			(accumulator, event) => accumulator + event.admitted,
-			initialValue
-		);
-
-		analytics.attendees += allTimeAttendees;
-		analytics.tickets += allTimeTickets;
-		analytics.scannedCodes += allTimeAdmitted;
+	if (!event) {
+		throw new ErrorWithStatus("Event not found", 404);
 	}
+
+	analytics.attendees += event.customers.length;
+	analytics.tickets += event.ticketsSold;
+	analytics.scannedCodes += event.admitted;
+
+	return analytics;
+};
+
+export const getAllTimeAnalytics = async (
+	organizerId: string
+): Promise<Analytics> => {
+	const analytics: Analytics = {
+		attendees: 0,
+		tickets: 0,
+		scannedCodes: 0,
+	};
+
+	const events = await EventModel.find({ organizer: organizerId });
+
+	if (!events) {
+		throw new ErrorWithStatus("Events not found", 404);
+	}
+
+	const initialValue = 0;
+
+	const allTimeTickets = events.reduce(
+		(accumulator, event) => accumulator + event.ticketsSold,
+		initialValue
+	);
+	const allTimeAttendees = events.reduce(
+		(accumulator, event) => accumulator + event.customers.length,
+		initialValue
+	);
+	const allTimeAdmitted = events.reduce(
+		(accumulator, event) => accumulator + event.admitted,
+		initialValue
+	);
+
+	analytics.attendees += allTimeAttendees;
+	analytics.tickets += allTimeTickets;
+	analytics.scannedCodes += allTimeAdmitted;
 
 	return analytics;
 };

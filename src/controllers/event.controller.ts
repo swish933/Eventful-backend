@@ -108,14 +108,30 @@ export async function admitAttendee(
 	}
 }
 
-export const getAnalytics = async (
-	req: Request<{}, {}, {}, { eventId: string | undefined }>,
+export const getAllTimeAnalytics = async (
+	req: Request,
 	res: Response<IGenericResponse>,
 	next: NextFunction
 ) => {
 	try {
-		let { eventId } = req.query;
-		const analytics = await eventService.getAnalytics(eventId, req.user.id);
+		console.log(req.user.id);
+		const analytics = await eventService.getAllTimeAnalytics(req.user.id);
+		return res.json({ message: "analytics", payload: analytics });
+	} catch (error) {
+		next(error);
+	}
+};
+export const getEventAnalytics = async (
+	req: Request,
+	res: Response<IGenericResponse>,
+	next: NextFunction
+) => {
+	try {
+		let { eventId } = req.params;
+		const analytics = await eventService.getEventAnalytics(
+			eventId,
+			req.user.id
+		);
 		return res.json({ message: "analytics", payload: analytics });
 	} catch (error) {
 		next(error);
