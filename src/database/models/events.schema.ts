@@ -75,9 +75,11 @@ const EventSchema = new Schema<IEvent, EventModel>(
 		],
 		ticketsSold: {
 			type: Number,
+			default: 0,
 		},
 		admitted: {
 			type: Number,
+			default: 0,
 		},
 	},
 	{ timestamps: true }
