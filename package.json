@@ -5,11 +5,9 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsc --build",
-		"start": "node ./dist/index.js",
+		"start": "node ./dist/index.js & node ./dist/jobs/image_upload/image_upload.worker.js & node ./dist/jobs/reminder/reminder.worker.js",
 		"start:dev": "tsx watch ./src",
-		"start:upload_worker": "tsx watch ./src/jobs/image_upload/image_upload.worker.ts",
-		"start:reminder_worker": "tsx watch ./src/jobs/reminder/reminder.worker.ts",
-		"start:workers": "tsx watch ./src/jobs/image_upload/image_upload.worker.ts & tsx watch ./src/jobs/reminder/reminder.worker.ts"
+		"start:dev_workers": "tsx watch ./src/jobs/image_upload/image_upload.worker.ts & tsx watch ./src/jobs/reminder/reminder.worker.ts"
 	},
 	"keywords": [],
 	"author": "",
@@ -40,7 +38,6 @@
 		"redis": "^4.6.15",
 		"winston": "^3.13.1"
 	},
-	"type": "module",
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.2",
 		"@types/express": "^4.17.21",
