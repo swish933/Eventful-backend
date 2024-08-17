@@ -5,7 +5,11 @@ import {
 	updateEventCustomers,
 	updateEventTickets,
 } from "../services/event.service";
-import { updateUserEvents } from "../services/user.service";
+import {
+	updateUserEvents,
+	updateUserOrders,
+	getUserOrdersById,
+} from "../services/user.service";
 import { IOrderDto } from "../types/dtos/order.dto";
 import { AxiosResponse } from "axios";
 import { initializePaystackTransaction } from "../integrations/paystack";
@@ -71,8 +75,9 @@ export async function updateOrder(
 		const amountPaid = updatedOrder.amount;
 
 		await updateEventCustomers(eventId, customerId);
-		await updateUserEvents(eventId, customerId);
 		await updateEventTickets(eventId, amountPaid);
+		await updateUserEvents(eventId, customerId);
+		await updateUserOrders(updatedOrder.id, customerId);
 
 		console.log("Transaction, Event and User updated", body.data.reference);
 
@@ -107,6 +112,19 @@ export async function getPaymentInfo(
 		const { orderId } = req.params;
 		const paymentInformation = await orderService.getPaymentInfo(orderId);
 		res.json({ message: "Order", payload: paymentInformation });
+	} catch (error: any) {
+		next(error);
+	}
+}
+
+export async function getUserOrders(
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	try {
+		const orders = await getUserOrdersById(req.user.id);
+		res.json({ message: "Orders", payload: orders });
 	} catch (error: any) {
 		next(error);
 	}
