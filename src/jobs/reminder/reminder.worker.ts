@@ -19,7 +19,6 @@ import { sendEmail } from "../../integrations/mailgun";
 const redisHost = process.env.REDIS_HOST || "127.0.0.1";
 const redisPort = Number(process.env.REDIS_PORT) || 6379;
 const redisPassword = process.env.REDIS_PASSWORD;
-const redisUserName = process.env.REDIS_USERNAME;
 
 const sendReminderNotifs = async () => {
 	try {
@@ -110,7 +109,6 @@ const worker = new Worker<IReminderJobDto>(
 		connection: {
 			host: redisHost,
 			port: redisPort,
-			username: redisUserName,
 			password: redisPassword,
 		},
 	}

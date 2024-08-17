@@ -86,8 +86,8 @@ const worker = new Worker<IImageUploadJobDto>(
 		connection: {
 			host: redisHost,
 			port: redisPort,
-			username: redisUserName,
 			password: redisPassword,
+			
 		},
 	}
 );
