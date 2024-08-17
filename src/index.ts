@@ -16,7 +16,7 @@ const app: Express = express();
 const PORT = process.env.PORT || "3000";
 
 connectToMongoDB();
-// redis.connect();
+redis.connect();
 
 app.use(morgan("dev"));
 app.use(express.json());
