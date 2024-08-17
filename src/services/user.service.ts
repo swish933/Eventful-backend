@@ -1,6 +1,7 @@
 import { IUser } from "../database/models/users.schema";
 import UserModel from "../database/models/users.schema";
 import { IEvent } from "../database/models/events.schema";
+import { IOrder } from "../database/models/orders.schema";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { Types } from "mongoose";
 
@@ -31,6 +32,21 @@ export const updateUserEvents = async (
 	return;
 };
 
+export const updateUserOrders = async (
+	orderId: string,
+	customerId: Types.ObjectId
+) => {
+	const updatedUser = await UserModel.findOneAndUpdate(
+		{ _id: customerId },
+		{ $push: { orders: orderId } }
+	);
+
+	if (!updatedUser) {
+		throw new ErrorWithStatus("User not found", 404);
+	}
+	return;
+};
+
 export const getUserEvents = async (id: string) => {
 	const user = await UserModel.findById(id).populate<{ events: IEvent[] }>({
 		path: "events",
@@ -42,3 +58,15 @@ export const getUserEvents = async (id: string) => {
 	}
 	return user.events;
 };
+
+export async function getUserOrdersById(userId: string) {
+	const user = await UserModel.findById(userId).populate<{ orders: IOrder[] }>({
+		path: "orders",
+		select: "-createdAt -updatedAt",
+	});
+
+	if (!user) {
+		throw new ErrorWithStatus("Events not found", 404);
+	}
+	return user.orders;
+}

@@ -22,6 +22,13 @@ orderRouter.get("/paystack/success", orderController.verifyOrder);
 
 orderRouter.post("/paystack/callback", orderController.updateOrder);
 
+orderRouter.get(
+	"/",
+	verifyToken,
+	verifyRole([UserRoles.Attendee]),
+	orderController.getUserOrders
+);
+
 orderRouter.get("/:orderId", verifyToken, orderController.getOrder);
 
 orderRouter.get(

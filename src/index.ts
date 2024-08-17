@@ -9,6 +9,7 @@ import eventRouter from "./routers/v1/event.router";
 import orderRouter from "./routers/v1/order.router";
 import reminderRouter from "./routers/v1/reminder.router";
 import errorHandler from "./middleware/error.middleware";
+import { rateLimit } from "express-rate-limit";
 
 dotenv.config();
 
@@ -18,6 +19,14 @@ const PORT = process.env.PORT || "3000";
 connectToMongoDB();
 redis.connect();
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 100,
+	standardHeaders: "draft-7",
+	legacyHeaders: false,
+});
+
+app.use(limiter);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
