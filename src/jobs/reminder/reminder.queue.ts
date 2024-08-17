@@ -9,8 +9,8 @@ const redisUserName = process.env.REDIS_USERNAME;
 
 const reminderQueue = new Queue(queueName.Reminders, {
 	connection: {
-		host: redisHost,
 		port: redisPort,
+		host: redisHost,
 		username: redisUserName,
 		password: redisPassword,
 	},
