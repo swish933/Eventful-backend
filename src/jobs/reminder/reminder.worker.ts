@@ -47,7 +47,7 @@ const sendReminderNotifs = async () => {
 			})
 			.select("-createdAt -updatedAt");
 
-		if (!reminders) {
+		if (!reminders.length) {
 			console.log("No reminders right now");
 			return;
 		}

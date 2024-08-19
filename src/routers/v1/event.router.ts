@@ -8,8 +8,11 @@ import {
 	verifyRole,
 	verifyToken,
 } from "../../middleware/access-control.middleware";
+import { limiter } from "../../util/ratelimiter";
 
 const eventRouter = Router();
+
+eventRouter.use(limiter);
 
 const upload = multer({
 	dest: "/tmp/uploads",
