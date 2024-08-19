@@ -53,19 +53,34 @@ const sendReminderNotifs = async () => {
 		}
 
 		for (const reminder of reminders) {
-			sendEmail({
-				from: "Eventful",
-				to:
-					reminder.reminderOwner.role === UserRoles.Attendee
-						? reminder.reminderOwner.email
-						: reminder.event.customers.toString(),
-				subject: `[${reminder.event.name}] reminder`,
-				template: "eventftul_event_reminder",
-				"t:variables": JSON.stringify({
-					title: reminder.event.name,
-					dateTime: reminder.event.startsAt.toString(),
-				}),
-			});
+			if (reminder.reminderOwner.role === UserRoles.Attendee) {
+				sendEmail({
+					from: "Eventful",
+					to: reminder.reminderOwner.email,
+					subject: `[${reminder.event.name}] reminder`,
+					template: "eventftul_event_reminder",
+					"t:variables": JSON.stringify({
+						title: reminder.event.name,
+						dateTime: reminder.event.startsAt.toString(),
+					}),
+				});
+			}
+
+			if (
+				reminder.reminderOwner.role === UserRoles.Organizer &&
+				reminder.event.customers.length
+			) {
+				sendEmail({
+					from: "Eventful",
+					to: reminder.event.customers.toString(),
+					subject: `[${reminder.event.name}] reminder`,
+					template: "eventftul_event_reminder",
+					"t:variables": JSON.stringify({
+						title: reminder.event.name,
+						dateTime: reminder.event.startsAt.toString(),
+					}),
+				});
+			}
 
 			reminder.status = resourceStatus.Completed;
 			await reminder.save();
