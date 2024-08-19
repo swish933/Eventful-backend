@@ -12,8 +12,6 @@ import { limiter } from "../../util/ratelimiter";
 
 const userRouter = Router();
 
-userRouter.use(limiter);
-
 const upload = multer({
 	dest: "/tmp/uploads",
 	limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
@@ -25,6 +23,9 @@ userRouter.post(
 	validationMiddleware(registerUserSchema),
 	userController.registerUser
 );
+
+userRouter.use(limiter);
+
 userRouter.get(
 	"/",
 	verifyToken,
