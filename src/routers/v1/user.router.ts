@@ -8,7 +8,6 @@ import {
 import validationMiddleware from "../../middleware/validation.middleware";
 import { registerUserSchema } from "../../validation/auth.validation";
 import multer from "multer";
-import { limiter } from "../../util/ratelimiter";
 
 const userRouter = Router();
 
@@ -23,8 +22,6 @@ userRouter.post(
 	validationMiddleware(registerUserSchema),
 	userController.registerUser
 );
-
-userRouter.use(limiter);
 
 userRouter.get(
 	"/",

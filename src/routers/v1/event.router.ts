@@ -12,8 +12,6 @@ import { limiter } from "../../util/ratelimiter";
 
 const eventRouter = Router();
 
-eventRouter.use(limiter);
-
 const upload = multer({
 	dest: "/tmp/uploads",
 	limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
