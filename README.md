@@ -9,3 +9,7 @@
 ### API Documentation
 
 [Docs.](https://documenter.getpostman.com/view/4304944/2sA3s7kVJF)
+
+#### Note:
+
+Mails from the service might end up in **spam**

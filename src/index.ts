@@ -26,6 +26,7 @@ const limiter = rateLimit({
 	legacyHeaders: false,
 });
 
+app.enable("trust proxy");
 app.use(limiter);
 app.use(morgan("dev"));
 app.use(express.json());
