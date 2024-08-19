@@ -7,8 +7,6 @@ import { limiter } from "../../util/ratelimiter";
 
 const reminderRouter = Router();
 
-reminderRouter.use(limiter);
-
 reminderRouter.post(
 	"/",
 	verifyToken,
