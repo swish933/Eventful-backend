@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import { connectToMongoDB } from "./database/connection";
 import redis from "./integrations/redis";
+import cors from "cors";
 import authRouter from "./routers/v1/auth.router";
 import userRouter from "./routers/v1/user.router";
 import eventRouter from "./routers/v1/event.router";
@@ -20,6 +21,7 @@ redis.connect();
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cors());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/events", eventRouter);

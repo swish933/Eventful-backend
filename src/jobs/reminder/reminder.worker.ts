@@ -124,7 +124,6 @@ const worker = new Worker<IReminderJobDto>(
 		connection: {
 			host: redisHost,
 			port: redisPort,
-			password: redisPassword,
 		},
 	}
 );

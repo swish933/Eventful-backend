@@ -48,6 +48,7 @@ export const createEvent = async (
 	}
 };
 
+//paginate and cache
 export const getAllEvents = async (
 	req: Request,
 	res: Response<IGenericResponse>,
@@ -75,6 +76,7 @@ export const getEventById = async (
 	}
 };
 
+//paginate and cache
 export const getEvents = async (
 	req: Request,
 	res: Response<IGenericResponse>,
@@ -121,6 +123,7 @@ export const getAllTimeAnalytics = async (
 		next(error);
 	}
 };
+
 export const getEventAnalytics = async (
 	req: Request,
 	res: Response<IGenericResponse>,

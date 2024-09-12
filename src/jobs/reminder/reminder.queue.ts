@@ -10,7 +10,6 @@ const reminderQueue = new Queue(queueName.Reminders, {
 	connection: {
 		port: redisPort,
 		host: redisHost,
-		password: redisPassword,
 	},
 });
 
