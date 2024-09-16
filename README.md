@@ -1,4 +1,13 @@
 # Eventful
+ An event management system. 
+ 
+### Features
+- Authentication and Authorization
+- Event creation
+- Payment for events
+- QR code generation to verify that an attendee is valid and can have access to an event
+- Email notifications to remind attendees of events that are coming up
+- Analytics
 
 ### How to run
 
