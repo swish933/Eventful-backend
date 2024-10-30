@@ -63,6 +63,7 @@ export async function getUserOrdersById(userId: string) {
 	const user = await UserModel.findById(userId).populate<{ orders: IOrder[] }>({
 		path: "orders",
 		select: "-createdAt -updatedAt",
+		populate: { path: "event", select: "name price startsAt location images eventType" },
 	});
 
 	if (!user) {
