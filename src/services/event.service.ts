@@ -30,11 +30,17 @@ export const createEvent = async (
 	return data;
 };
 
-export const getEventById = async (eventId: string): Promise<IEvent> => {
-	const event = await EventModel.findById(eventId);
+export const getEventById = async (eventId: string) => {
+	const event = await EventModel.findById(eventId).populate<{
+		organizer: IUser;
+	}>({
+		path: "organizer",
+		select: "username avatar",
+	});
 	if (!event) {
 		throw new ErrorWithStatus("Event not found", 404);
 	}
+
 	return event;
 };
 

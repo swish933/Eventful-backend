@@ -28,7 +28,7 @@ eventRouter.post(
 
 eventRouter.get("/myevents", verifyToken, eventController.getEvents);
 
-eventRouter.get("/qrcode/:orderId", eventController.admitAttendee);
+eventRouter.put("/qrcode/:orderId", eventController.admitAttendee);
 
 eventRouter.get(
 	"/",

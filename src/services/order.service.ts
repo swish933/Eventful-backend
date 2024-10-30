@@ -34,7 +34,7 @@ export async function updateOrder(
 		throw new ErrorWithStatus("Resource not found", 404);
 	}
 
-	const qrcodeLink = `${process.env.CLIENT_BASE_URL}/api/v1/events/qrcode/${orderId}`;
+	const qrcodeLink = `${process.env.CLIENT_BASE_URL}/admit/${orderId}`;
 
 	if (event === "charge.success") {
 		order.status = orderStatus.Successful;
