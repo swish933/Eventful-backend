@@ -50,7 +50,7 @@ export const updateUserOrders = async (
 export const getUserEvents = async (id: string) => {
 	const user = await UserModel.findById(id).populate<{ events: IEvent[] }>({
 		path: "events",
-		select: "-customers -createdAt -updatedAt -images",
+		select: "-customers -updatedAt -images",
 		populate: { path: "organizer", select: "avatar username" },
 	});
 	if (!user) {
@@ -62,8 +62,12 @@ export const getUserEvents = async (id: string) => {
 export async function getUserOrdersById(userId: string) {
 	const user = await UserModel.findById(userId).populate<{ orders: IOrder[] }>({
 		path: "orders",
+		options: { sort: "-createdAt" },
 		select: "-createdAt -updatedAt",
-		populate: { path: "event", select: "name price startsAt location images eventType" },
+		populate: {
+			path: "event",
+			select: "name price startsAt location images eventType",
+		},
 	});
 
 	if (!user) {
