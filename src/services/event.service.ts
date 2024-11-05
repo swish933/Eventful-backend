@@ -86,12 +86,14 @@ export const updateEventTickets = async (
 };
 
 export const getEvents = async (organizerId: string) => {
-	const events = await EventModel.find({ organizer: organizerId }).populate<{
-		customers: IUser[];
-	}>({
-		path: "customers",
-		select: "-role -createdAt -updatedAt -events -orders",
-	});
+	const events = await EventModel.find({ organizer: organizerId })
+		.sort("-createdAt")
+		.populate<{
+			customers: IUser[];
+		}>({
+			path: "customers",
+			select: "-role -createdAt -updatedAt -events -orders",
+		});
 	if (!events) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
