@@ -12,6 +12,11 @@ type Analytics = {
 	scannedCodes: number;
 };
 
+type EventsReturnType = {
+	events: IEvent[];
+	meta: { page: number; limit: number; total: number };
+};
+
 export const createEvent = async (
 	body: ICreateEventDto,
 	files: string[]
@@ -44,14 +49,28 @@ export const getEventById = async (eventId: string) => {
 	return event;
 };
 
-export const getAllEvents = async (): Promise<IEvent[]> => {
-	const events = await EventModel.find({ endsAt: { $gt: Date.now() } }).select(
-		"-customers -createdAt -updatedAt -admitted"
-	);
+export const getAllEvents = async ({
+	page,
+	limit,
+	skip,
+}: {
+	page: number;
+	limit: number;
+	skip: number;
+}): Promise<EventsReturnType> => {
+	const events = await EventModel.find({ endsAt: { $gt: Date.now() } })
+		.select("-customers -createdAt -updatedAt -admitted")
+		.skip(skip)
+		.limit(limit);
+
 	if (!events) {
 		throw new ErrorWithStatus("Events not found", 400);
 	}
-	return events;
+	const total = await EventModel.countDocuments({
+		endsAt: { $gt: Date.now() },
+	});
+
+	return { events, meta: { page, limit, total } };
 };
 
 export const updateEventCustomers = async (

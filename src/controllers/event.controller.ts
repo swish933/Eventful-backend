@@ -50,13 +50,22 @@ export const createEvent = async (
 
 //paginate and cache
 export const getAllEvents = async (
-	req: Request,
+	req: Request<{}, {}, {}, { page: string; limit: string }>,
 	res: Response<IGenericResponse>,
 	next: NextFunction
 ) => {
+	const page = parseInt(req.query.page) || 1;
+	const limit = parseInt(req.query.limit) || 20;
+
+	const skip = (page - 1) * limit;
+
 	try {
-		const events = await eventService.getAllEvents();
-		res.json({ message: "Events", payload: events });
+		const { events, meta } = await eventService.getAllEvents({
+			page,
+			limit,
+			skip,
+		});
+		res.json({ message: "Events", payload: { events, meta } });
 	} catch (error) {
 		next(error);
 	}

@@ -12,7 +12,7 @@ export interface IOrder {
 	updatedAt: Date;
 }
 
-type OrderModel = Model<IOrder>;
+export type OrderModel = Model<IOrder>;
 
 const OrderSchema = new Schema<IOrder, OrderModel>(
 	{
