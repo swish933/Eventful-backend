@@ -12,7 +12,7 @@ type Analytics = {
 	scannedCodes: number;
 };
 
-type EventsReturnType = {
+export type EventsReturnType = {
 	events: IEvent[];
 	meta: { page: number; limit: number; total: number };
 };
@@ -104,7 +104,18 @@ export const updateEventTickets = async (
 	});
 };
 
-export const getEvents = async (organizerId: string) => {
+export const getEvents = async (
+	organizerId: string,
+	{
+		page,
+		limit,
+		skip,
+	}: {
+		page: number;
+		limit: number;
+		skip: number;
+	}
+) => {
 	const events = await EventModel.find({ organizer: organizerId })
 		.sort("-createdAt")
 		.populate<{
@@ -112,11 +123,16 @@ export const getEvents = async (organizerId: string) => {
 		}>({
 			path: "customers",
 			select: "-role -createdAt -updatedAt -events -orders",
-		});
+		})
+		.skip(skip)
+		.limit(limit);
+
+	const total = await EventModel.countDocuments({ organizer: organizerId });
+
 	if (!events) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
-	return events;
+	return { events, meta: { page, limit, total } };
 };
 
 export const admitAttendee = async (eventId: string) => {

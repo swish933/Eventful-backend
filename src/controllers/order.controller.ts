@@ -119,13 +119,22 @@ export async function getPaymentInfo(
 
 //paginate and cache
 export async function getUserOrders(
-	req: Request,
+	req: Request<{}, {}, {}, { page: string; limit: string }>,
 	res: Response,
 	next: NextFunction
 ) {
+	const page = parseInt(req.query.page) || 1;
+	const limit = parseInt(req.query.limit) || 20;
+
+	const skip = (page - 1) * limit;
+
 	try {
-		const orders = await getUserOrdersById(req.user.id);
-		res.json({ message: "Orders", payload: orders });
+		const { orders, meta } = await getUserOrdersById(req.user.id, {
+			page,
+			limit,
+			skip,
+		});
+		res.json({ message: "Orders", payload: { orders, meta } });
 	} catch (error: any) {
 		next(error);
 	}

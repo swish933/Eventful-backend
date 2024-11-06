@@ -4,6 +4,7 @@ import { IEvent } from "../database/models/events.schema";
 import { IOrder } from "../database/models/orders.schema";
 import { ErrorWithStatus } from "../exceptions/error-with-status";
 import { Types } from "mongoose";
+import { EventsReturnType } from "./event.service";
 
 export const getUser = async (id: string): Promise<IUser> => {
 	try {
@@ -47,22 +48,41 @@ export const updateUserOrders = async (
 	return;
 };
 
-export const getUserEvents = async (id: string) => {
+export const getUserEvents = async (
+	id: string,
+	{
+		page,
+		limit,
+		skip,
+	}: {
+		page: number;
+		limit: number;
+		skip: number;
+	}
+): Promise<EventsReturnType> => {
 	const user = await UserModel.findById(id).populate<{ events: IEvent[] }>({
 		path: "events",
 		select: "-customers -updatedAt -images",
+		options: { skip, limit },
 		populate: { path: "organizer", select: "avatar username" },
 	});
+
+	const currentUser = await UserModel.findById(id);
+	const total = currentUser?.events?.length || 0;
+
 	if (!user) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
-	return user.events;
+	return { events: user.events, meta: { page, limit, total } };
 };
 
-export async function getUserOrdersById(userId: string) {
+export async function getUserOrdersById(
+	userId: string,
+	{ page, limit, skip }: { page: number; limit: number; skip: number }
+) {
 	const user = await UserModel.findById(userId).populate<{ orders: IOrder[] }>({
 		path: "orders",
-		options: { sort: "-createdAt" },
+		options: { sort: "-createdAt", limit, skip },
 		select: "-createdAt -updatedAt",
 		populate: {
 			path: "event",
@@ -70,8 +90,11 @@ export async function getUserOrdersById(userId: string) {
 		},
 	});
 
+	const currentUser = await UserModel.findById(userId);
+	const total = currentUser?.orders?.length || 0;
+
 	if (!user) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
-	return user.orders;
+	return { orders: user.orders, meta: { page, limit, total } };
 }
