@@ -19,7 +19,7 @@ export interface IEvent {
 	updatedAt: Date;
 }
 
-type EventModel = Model<IEvent>;
+export type EventModel = Model<IEvent>;
 
 const EventSchema = new Schema<IEvent, EventModel>(
 	{

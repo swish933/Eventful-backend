@@ -12,6 +12,11 @@ type Analytics = {
 	scannedCodes: number;
 };
 
+export type EventsReturnType = {
+	events: IEvent[];
+	meta: { page: number; limit: number; total: number };
+};
+
 export const createEvent = async (
 	body: ICreateEventDto,
 	files: string[]
@@ -44,14 +49,28 @@ export const getEventById = async (eventId: string) => {
 	return event;
 };
 
-export const getAllEvents = async (): Promise<IEvent[]> => {
-	const events = await EventModel.find({ endsAt: { $gt: Date.now() } }).select(
-		"-customers -createdAt -updatedAt -admitted"
-	);
+export const getAllEvents = async ({
+	page,
+	limit,
+	skip,
+}: {
+	page: number;
+	limit: number;
+	skip: number;
+}): Promise<EventsReturnType> => {
+	const events = await EventModel.find({ endsAt: { $gt: Date.now() } })
+		.select("-customers -createdAt -updatedAt -admitted")
+		.skip(skip)
+		.limit(limit);
+
 	if (!events) {
 		throw new ErrorWithStatus("Events not found", 400);
 	}
-	return events;
+	const total = await EventModel.countDocuments({
+		endsAt: { $gt: Date.now() },
+	});
+
+	return { events, meta: { page, limit, total } };
 };
 
 export const updateEventCustomers = async (
@@ -85,17 +104,35 @@ export const updateEventTickets = async (
 	});
 };
 
-export const getEvents = async (organizerId: string) => {
-	const events = await EventModel.find({ organizer: organizerId }).populate<{
-		customers: IUser[];
-	}>({
-		path: "customers",
-		select: "-role -createdAt -updatedAt -events -orders",
-	});
+export const getEvents = async (
+	organizerId: string,
+	{
+		page,
+		limit,
+		skip,
+	}: {
+		page: number;
+		limit: number;
+		skip: number;
+	}
+) => {
+	const events = await EventModel.find({ organizer: organizerId })
+		.sort("-createdAt")
+		.populate<{
+			customers: IUser[];
+		}>({
+			path: "customers",
+			select: "-role -createdAt -updatedAt -events -orders",
+		})
+		.skip(skip)
+		.limit(limit);
+
+	const total = await EventModel.countDocuments({ organizer: organizerId });
+
 	if (!events) {
 		throw new ErrorWithStatus("Events not found", 404);
 	}
-	return events;
+	return { events, meta: { page, limit, total } };
 };
 
 export const admitAttendee = async (eventId: string) => {
