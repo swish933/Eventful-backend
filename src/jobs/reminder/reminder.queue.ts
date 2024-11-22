@@ -4,13 +4,8 @@ import { queueName } from "../../util/constant";
 import IORedis from "ioredis";
 
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
-// const redisHost = process.env.REDIS_HOST || "127.0.0.1";
-// const redisPort = Number(process.env.REDIS_PORT) || 6379;
 
 const connection = new IORedis(redisUrl);
-// const redisHost = process.env.REDIS_HOST || "127.0.0.1";
-// const redisPort = Number(process.env.REDIS_PORT) || 6379;
-// const redisPassword = process.env.REDIS_PASSWORD;
 
 const reminderQueue = new Queue(queueName.Reminders, { connection });
 
