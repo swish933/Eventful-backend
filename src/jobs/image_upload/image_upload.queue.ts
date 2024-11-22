@@ -1,16 +1,14 @@
 import { JobsOptions, Queue } from "bullmq";
 import { IImageUploadJobDto } from "../../types/job.types";
 import { queueName } from "../../util/constant";
+import IORedis from "ioredis";
 
-const redisHost = process.env.REDIS_HOST || "127.0.0.1";
-const redisPort = Number(process.env.REDIS_PORT) || 6379;
-//
-const imageUploadQueue = new Queue(queueName.Images, {
-	connection: {
-		host: redisHost,
-		port: redisPort,
-	},
-});
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+
+const connection = new IORedis(redisUrl);
+
+const imageUploadQueue = new Queue(queueName.Images, { connection });
+
 const queueOpts: JobsOptions = {
 	removeOnComplete: true,
 	removeOnFail: true,
@@ -21,4 +19,7 @@ const enqueueUploadJob = function (job: IImageUploadJobDto) {
 	imageUploadQueue.add(job.name, job.data, queueOpts);
 };
 
+imageUploadQueue.on("error", (err) => {
+	console.log(err.message);
+});
 export { enqueueUploadJob };
