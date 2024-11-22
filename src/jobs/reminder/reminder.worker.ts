@@ -15,10 +15,15 @@ import {
 } from "../reminder/reminder.queue";
 import { resourceStatus } from "../../util/constant";
 import { sendEmail } from "../../integrations/mailgun";
+import IORedis from "ioredis";
 
-const redisHost = process.env.REDIS_HOST || "127.0.0.1";
-const redisPort = Number(process.env.REDIS_PORT) || 6379;
-const redisPassword = process.env.REDIS_PASSWORD;
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+// const redisHost = process.env.REDIS_HOST || "127.0.0.1";
+// const redisPort = Number(process.env.REDIS_PORT) || 6379;
+
+const connection = new IORedis(redisUrl, {
+	maxRetriesPerRequest: null,
+});
 
 const sendReminderNotifs = async () => {
 	try {
@@ -120,12 +125,7 @@ const processReminderJob = async (job: Job) => {
 const worker = new Worker<IReminderJobDto>(
 	queueName.Reminders,
 	processReminderJob,
-	{
-		connection: {
-			host: redisHost,
-			port: redisPort,
-		},
-	}
+	{ connection }
 );
 
 worker.on("completed", (job) => {
@@ -134,6 +134,10 @@ worker.on("completed", (job) => {
 
 worker.on("failed", (job, err) => {
 	console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+worker.on("error", (err) => {
+	console.log(err.message);
 });
 
 connectToMongoDB();

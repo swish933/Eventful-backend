@@ -6,11 +6,13 @@ import cloudinary from "../../integrations/cloudinary";
 import fs from "node:fs/promises";
 import { queueName, jobNames } from "../../util/constant";
 import { connectToMongoDB } from "../../database/connection";
+import IORedis from "ioredis";
 
-const redisHost = process.env.REDIS_HOST || "127.0.0.1";
-const redisPort = Number(process.env.REDIS_PORT) || 6379;
-const redisPassword = process.env.REDIS_PASSWORD;
-const redisUserName = process.env.REDIS_USERNAME;
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+
+const connection = new IORedis(redisUrl, {
+	maxRetriesPerRequest: null,
+});
 
 const uploadToCloudinary = async (job: Job) => {
 	console.log("Uploading assets to cloudinary");
@@ -82,12 +84,7 @@ const uploadToCloudinary = async (job: Job) => {
 const worker = new Worker<IImageUploadJobDto>(
 	queueName.Images,
 	uploadToCloudinary,
-	{
-		connection: {
-			host: redisHost,
-			port: redisPort,
-		},
-	}
+	{ connection }
 );
 
 worker.on("completed", (job) => {
@@ -96,6 +93,10 @@ worker.on("completed", (job) => {
 
 worker.on("failed", (job, err) => {
 	console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+worker.on("error", (err) => {
+	console.log(err.message);
 });
 
 connectToMongoDB();
