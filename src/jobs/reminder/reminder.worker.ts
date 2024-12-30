@@ -71,7 +71,7 @@ const sendReminderNotifs = async () => {
 
 			if (
 				reminder.reminderOwner.role === UserRoles.Organizer &&
-				reminder.event.customers.length
+				reminder.event.customers.length > 0
 			) {
 				sendEmail({
 					from: "Eventful",
